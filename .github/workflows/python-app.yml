@@ -21,4 +21,4 @@ jobs:
 
     - name: Run tests
       working-directory: ./src
-      run: python -m unittest discover -s src/test -p '*_test.py'
+      run: python -m unittest discover -s test -p '*_test.py'
