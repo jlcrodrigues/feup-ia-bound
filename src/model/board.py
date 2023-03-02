@@ -105,6 +105,16 @@ class Board:
             if piece == first_outer + 1: continue
             self.nodes[piece].place_piece(BLACK)
             self.pieces[BLACK].append((self.ring_number - 1, piece % self.nodes_per_ring))
+    
+    def place_piece(self, player: int, coords: tuple):
+        """Place a piece. Updates both dictionary and Node object."""
+        self.nodes[self.to_index(coords)].place_piece(player)
+        self.pieces[player].append(coords)
+
+    def remove_piece(self, player: int, coords: tuple):
+        """Remove a piece. Updates both dictionary and Node object."""
+        self.nodes[self.to_index(coords)].remove_piece()
+        self.pieces[player].remove(coords)
 
     def valid_move(self, player: int, source: tuple, dest: tuple):
         """
@@ -128,11 +138,12 @@ class Board:
     def move(self, player: int, source: tuple, dest: tuple):
         """Move a player's piece from source to destination."""
         if not self.valid_move(player, source, dest): raise Exception("Invalid Move")
-        self.nodes[self.to_index(source)].remove_piece()
-        self.nodes[self.to_index(dest)].place_piece(player)
+        self.place_piece(player, dest)
+        self.remove_piece(player, source)
 
     def is_bound(self, piece: tuple):
         """Find if a piece is bound."""
+        if self.nodes[self.to_index(piece)].piece == 0: return False
         edges = self.nodes[self.to_index(piece)].edges
         for edge in edges:
             if self.nodes[edge].piece == 0: return False
@@ -144,5 +155,14 @@ class Board:
         for edge in edges:
             if self.is_bound(self.to_coords(edge)): return True
         return False
+
+    def get_moves(self, player: int):
+        """Get a list of available moves for a player."""
+        moves = []
+        for piece in self.pieces[player]:
+            for edge in self.nodes[self.to_index(piece)].edges:
+                if self.valid_move(player, piece, self.to_coords(edge)):
+                    moves.append((piece, self.to_coords(edge)))
+        return moves
         
        

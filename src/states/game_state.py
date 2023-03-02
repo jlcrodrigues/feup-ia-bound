@@ -7,5 +7,5 @@ class GameState(State):
         pass
 
     def step(self):
-        print("step")
+        winner = self.controller.play()
         return None
