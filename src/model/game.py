@@ -1,4 +1,4 @@
-from board import Board, BLACK, WHITE
+from src.model.board import Board, BLACK, WHITE
 
 class Game:
     """
