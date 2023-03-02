@@ -1,7 +1,11 @@
 from model.board import Board
+from states.game_state import GameState
 
 def main():
-    board = Board()
+    state = GameState()
+
+    while (state != None):
+        state = state.step()
 
 if __name__ == "__main__":
     main()
