@@ -1,8 +1,6 @@
 import unittest
-import sys
 
-
-from src.model.game import Game
+from model.game import Game
 
 class TestGame(unittest.TestCase):
     def test_game_over(self):

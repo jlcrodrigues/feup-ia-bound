@@ -1,8 +1,6 @@
 import unittest
-import sys
 
-
-from src.model.board import Board, Node
+from model.board import Board, Node
 
 # The unit test class
 class TestBoard(unittest.TestCase):
