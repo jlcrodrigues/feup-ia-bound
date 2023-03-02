@@ -25,6 +25,13 @@ class TestBoard(unittest.TestCase):
                          ]
 
         self.assertEqual(board.nodes, sample_nodes)
+    
+    def test_movement(self):
+        board = Board()
+
+        board.move(2, (0, 0), (1,0))
+        self.assertEqual(board.nodes[0].piece, 0)
+        self.assertEqual(board.nodes[5].piece, 2)
 
 if __name__ == '__main__':
     unittest.main()
