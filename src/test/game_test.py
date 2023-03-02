@@ -1,10 +1,8 @@
 import unittest
 import sys
 
-sys.path.insert(0, '../src')
-sys.path.insert(0, '../src/model')
 
-from model.game import Game
+from src.model.game import Game
 
 class TestGame(unittest.TestCase):
     def test_game_over(self):

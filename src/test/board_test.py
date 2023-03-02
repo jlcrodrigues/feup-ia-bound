@@ -1,9 +1,8 @@
 import unittest
 import sys
 
-sys.path.insert(0, '../src')
 
-from model.board import Board, Node
+from src.model.board import Board, Node
 
 # The unit test class
 class TestBoard(unittest.TestCase):
