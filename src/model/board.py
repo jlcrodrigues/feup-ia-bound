@@ -5,7 +5,6 @@ NODES_PER_RING = 5
 BLACK = 1
 WHITE = 2
 
-
 class Node:
     """
     A node in the graph. The level corresponds to which ring it is on.
@@ -18,7 +17,7 @@ class Node:
         self.pos = pos
         if edges is None:
             edges = set()
-        self.edges = edges
+        self.edges = edges # Set of indexes
 
     def __str__(self):
         node = "Ring " + str(self.level) + ", pos " + str(self.pos) + " "
@@ -131,4 +130,19 @@ class Board:
         if not self.valid_move(player, source, dest): raise Exception("Invalid Move")
         self.nodes[self.to_index(source)].remove_piece()
         self.nodes[self.to_index(dest)].place_piece(player)
+
+    def is_bound(self, piece: tuple):
+        """Find if a piece is bound."""
+        edges = self.nodes[self.to_index(piece)].edges
+        for edge in edges:
+            if self.nodes[edge].piece == 0: return False
+        return True
+    
+    def did_bound(self, piece: tuple):
+        """Check if a placed piece bounded any of its neighbors."""
+        edges = self.nodes[self.to_index(piece)].edges
+        for edge in edges:
+            if self.is_bound(self.to_coords(edge)): return True
+        return False
+        
        

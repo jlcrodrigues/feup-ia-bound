@@ -33,5 +33,16 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.nodes[0].piece, 0)
         self.assertEqual(board.nodes[5].piece, 2)
 
+    def test_bound(self):
+        board = Board()
+        board.nodes[7].place_piece(1)
+        self.assertTrue(board.is_bound((0, 2)))
+    
+    def test_did_bound(self):
+        board = Board()
+        board.nodes[7].place_piece(1)
+        self.assertTrue(board.did_bound((1, 2)))
+
+
 if __name__ == '__main__':
     unittest.main()
