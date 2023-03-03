@@ -153,7 +153,8 @@ class Board:
         """Check if a placed piece bounded any of its neighbors."""
         edges = self.nodes[self.to_index(piece)].edges
         for edge in edges:
-            if self.is_bound(self.to_coords(edge)): return True
+            if self.is_bound(self.to_coords(edge)):
+                return True
         return False
 
     def get_moves(self, player: int):

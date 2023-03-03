@@ -8,6 +8,7 @@ Assuming python is installed, run the main file:
 
 ```bash
 pip install requirements.txt
+cd src
 python src/main.py
 ```
 
@@ -16,5 +17,6 @@ python src/main.py
 To run the tests, do:
 
 ```bash
-python -m unittest discover -s src/test -p '*_test.py'
+cd src
+python -m unittest discover -s test -p '*_test.py'
 ```
