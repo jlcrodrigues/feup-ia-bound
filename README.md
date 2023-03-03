@@ -14,6 +14,13 @@ python src/main.py
 
 ## Test
 
+There is also a script included to run the game without the display, in order to test the bots more efficiently:
+
+```bash
+cd src
+python src/main_dev.py
+```
+
 To run the tests, do:
 
 ```bash
