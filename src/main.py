@@ -1,8 +1,10 @@
 from model.board import Board
 from states.game_state import GameState
+from view.gui import GUI
 
 def main():
-    state = GameState()
+    gui = GUI()
+    state = GameState(gui)
 
     while (state != None):
         state = state.step()
