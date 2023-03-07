@@ -1,15 +1,9 @@
 import pygame
 from math import sin, cos
+
 from model.game import Game
 from model.board import Board
-
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 600
-
-BACKGROUND_COLOR = (245, 155, 50)
-EMPTY_COLOR = (240, 170, 76)
-PLAYER_1_COLOR = (20, 20, 20)
-PLAYER_2_COLOR = (237, 210, 187)
+from view.theme import *
 
 class GUI:
     """
@@ -25,14 +19,19 @@ class GUI:
         # pygame.display.set_icon(icon)
         self.clock = pygame.time.Clock()
 
-    def draw_game(self, game: Game):
+        self.mouse_pos = (-1, -1)
+        self.mouse_pressed = (False, False, False)
+
+
+    def draw_game(self, game: Game, selected: tuple):
         """Display current state of the game."""
         self.win.fill(BACKGROUND_COLOR)
-        self.draw_board(game.board)
+        self.draw_board(game.board, selected)
         pygame.display.update()
 
     def handle_events(self):
         """Fetch events from the GUI."""
+        self.mouse_pressed = (False, False, False)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.close()
@@ -42,17 +41,28 @@ class GUI:
                 self.win = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
                 self.win.blit(old_win, (0,0))
                 del old_win
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.mouse_pos = pygame.mouse.get_pos()
+                self.mouse_pressed = pygame.mouse.get_pressed()
                 
         return True
 
-    def draw_board(self, board):
+    def draw_board(self, board, selected: tuple):
         """Display the board, including nodes, pieces and edges."""
         for node in board.nodes:
             pos = self.get_pos(board, (node.level, node.pos))
             for edge in node.edges:
                 edge_pos = self.get_pos(board, board.to_coords(edge))
-                pygame.draw.line(self.win, EMPTY_COLOR, pos, edge_pos, 2)
-            pygame.draw.circle(self.win, self.get_color(node), pos , 10)
+                
+                line_color = EMPTY_COLOR
+                if board.nodes[edge].is_empty() and (node.level, node.pos) == selected:
+                    line_color = SELECTED_COLOR 
+                if board.to_coords(edge) == selected and node.is_empty():
+                    line_color = SELECTED_COLOR 
+
+                pygame.draw.line(self.win, line_color, pos, edge_pos, 4)
+            pygame.draw.circle(self.win, self.get_color(node), pos , PIECE_RADIUS)
 
     def get_pos(self, board: Board, coords: tuple):
         """

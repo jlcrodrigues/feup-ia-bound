@@ -7,7 +7,6 @@ class Game:
     def __init__(self):
         self.board = Board()
         self.player = BLACK
-        self.pieces = {}
         self.over = False
 
     def next_player(self):
@@ -16,6 +15,8 @@ class Game:
 
     def move(self, source: tuple, dest: tuple):
         """Makes a move and updates the state of the game."""
+        if source == None or dest == None:
+            raise Exception("Trying to move null play.")
         self.board.move(self.player, source, dest)
 
         if (self.board.did_bound(dest)):

@@ -5,7 +5,7 @@ from view.gui import GUI
 
 class GameState(State):
     def __init__(self, gui):
-        self.controller = GameController(Bot(1, 0), Bot(2, 0), gui)
+        self.controller = GameController(Bot(1, 0), None, gui)
         pass
 
     def step(self):
