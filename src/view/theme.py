@@ -1,0 +1,12 @@
+"""Defines a set of constants used by the gui and views."""
+
+SCREEN_WIDTH = 600
+SCREEN_HEIGHT = 600
+
+PIECE_RADIUS = 10
+
+BACKGROUND_COLOR = (245, 155, 50)
+EMPTY_COLOR = (240, 170, 76)
+PLAYER_1_COLOR = (20, 20, 20)
+PLAYER_2_COLOR = (237, 210, 187)
+SELECTED_COLOR = (237, 44, 53)

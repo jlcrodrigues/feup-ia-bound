@@ -165,5 +165,9 @@ class Board:
                 if self.valid_move(player, piece, self.to_coords(edge)):
                     moves.append((piece, self.to_coords(edge)))
         return moves
-        
-       
+
+    def get_piece_moves(self, piece: tuple):
+        """Get the valid moves for a piece."""
+        node = self.nodes[self.to_index(piece)]
+        if node.is_empty(): return [] 
+        return [self.to_coords(edge) for edge in node.edges if self.nodes[edge].is_empty()]
