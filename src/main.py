@@ -1,10 +1,10 @@
 from model.board import Board
-from states.game_state import GameState
+from states.menu_state import MenuState
 from view.gui import GUI
 
 def main():
     gui = GUI()
-    state = GameState(gui)
+    state = MenuState(gui)
 
     while (state != None):
         state = state.step()
