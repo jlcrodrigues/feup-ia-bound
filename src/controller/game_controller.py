@@ -45,7 +45,7 @@ class GameController:
         if self.player == None: 
             next_move = self.get_user_input()
         else:
-            next_move = self.player.get_move(self.game.board)
+            next_move = self.player.get_move(self.game)
 
         if next_move == None: return False
 
