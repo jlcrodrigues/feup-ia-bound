@@ -7,6 +7,7 @@ from random import randint
 
 class GameState(State):
     def __init__(self, gui, game_mode: int):
+        self.gui = gui
         players = self.get_players(game_mode)
         self.controller = GameController(players[0], players[1], gui)
         pass
@@ -26,5 +27,6 @@ class GameState(State):
 
 
     def step(self):
-        winner = self.controller.play()
-        return None
+        self.controller.play()
+        from states.menu_state import MenuState
+        return MenuState(self.gui)
