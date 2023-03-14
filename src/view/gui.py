@@ -24,7 +24,8 @@ class GUI:
         self.mouse_pos = (-1, -1)
         self.mouse_pressed = (False, False, False)
 
-        self.font = pygame.font.Font('../assets/fonts/immortal/IMMORTAL.ttf', 30)
+        #self.font = pygame.font.Font('../assets/fonts/immortal/IMMORTAL.ttf', 30)
+        self.font = pygame.font.Font(FONT_PATH, 30)
 
 
     def handle_events(self):
@@ -57,7 +58,7 @@ class GUI:
     def draw_grid(self, board, selected: tuple):
         """Display the board, including nodes, pieces and edges."""
         gap = (self.win.get_width() - PADDING) / (board.ring_number * 2)
-        center = (self.win.get_width() / 2, self.win.get_height() / 2)
+        center = (self.win.get_width() / 2, self.win.get_height() / 2 + PADDING / 3)
         pygame.draw.circle(self.win, EMPTY_COLOR, center, gap * board.ring_number + PIECE_RADIUS / 2 , LINE_WIDTH)
         for node in board.nodes:
             pos = self.get_pos(board, (node.level, node.pos))
@@ -90,7 +91,7 @@ class GUI:
         Get the screen coordinates from a tuple of board coordinates.
         Returns a tuple of the form (x, y)
         """
-        center = (self.win.get_width() / 2, self.win.get_height() / 2)
+        center = (self.win.get_width() / 2, self.win.get_height() / 2 + PADDING / 3)
         gap = (self.win.get_width() - PADDING) / (board.ring_number * 2) # gap between levels
         angle = 2 * 3.14 / board.nodes_per_ring
         offset = angle / 2 * (coords[0] // 2)

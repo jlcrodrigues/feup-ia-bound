@@ -1,5 +1,6 @@
 import pygame
 import pygame_menu
+from view.theme import *
 
 class MenuView:
     def __init__(self, gui):
@@ -8,13 +9,20 @@ class MenuView:
         self.start = False
 
         self.init_theme()
-        self.menu = pygame_menu.Menu('bound', gui.get_width(), gui.get_height(),
+        self.menu = pygame_menu.Menu('', gui.get_width(), gui.get_height(),
                        theme=self.theme)
 
         self.init_menu()
 
     def init_menu(self):
         """Define all the widgets needed on the menu."""
+        #title = pygame_menu.widgets.Label('bound').update_font({'size': 100})
+        #self.menu.add(title)
+        label = self.menu.add.label(
+            'bound',
+            font_name=FONT_PATH,
+            font_size=80)
+
         self.menu.add.selector('',
             [('Player vs Player', 1),
               ('Player vs Cpu', 2),
@@ -25,7 +33,14 @@ class MenuView:
 
     def init_theme(self):
         """Define the menu theme."""
-        self.theme = pygame_menu.themes.THEME_ORANGE.copy()
+        self.theme = pygame_menu.Theme()
+        self.theme.widget_font_color = EMPTY_COLOR
+        self.theme.selection_color = SELECTED_COLOR
+
+        self.theme.background_color = pygame_menu.BaseImage(
+            image_path="../assets/images/background.png"
+        )
+        self.theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_NONE
         self.theme.title_font = self.gui.font
         self.theme.widget_font = self.gui.font
 
