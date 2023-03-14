@@ -16,9 +16,7 @@ class MenuView:
 
     def init_menu(self):
         """Define all the widgets needed on the menu."""
-        #title = pygame_menu.widgets.Label('bound').update_font({'size': 100})
-        #self.menu.add(title)
-        label = self.menu.add.label(
+        self.menu.add.label(
             'bound',
             font_name=FONT_PATH,
             font_size=80)

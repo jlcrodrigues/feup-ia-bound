@@ -16,6 +16,7 @@ class GameController:
         self.game = Game()
         self.players = {}
         self.rounds = 0
+        self.close = False
 
         self.player_1 = player_1
         self.player_2 = player_2
@@ -25,14 +26,12 @@ class GameController:
 
     def play(self):
         """Play out a full game."""
-        while (not self.game.over):
+        while (not self.close):
             self.step()
-
-        sleep(2)
 
     def step(self):
         """Play one round of the game."""
-        self.view.step()
+        self.close = self.view.step()
         if (self.game.over): return
         if self.step_move():
             self.rounds += 1

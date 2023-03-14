@@ -26,12 +26,15 @@ class GUI:
 
         #self.font = pygame.font.Font('../assets/fonts/immortal/IMMORTAL.ttf', 30)
         self.font = pygame.font.Font(FONT_PATH, 30)
+        self.font_small = pygame.font.Font(FONT_PATH, 20)
+        self.events = []
 
 
     def handle_events(self):
         """Fetch events from the GUI."""
         self.mouse_pressed = (False, False, False)
-        for event in pygame.event.get():
+        self.events = pygame.event.get()
+        for event in self.events:
             if event.type == pygame.QUIT:
                 self.close()
                 return False
@@ -47,18 +50,24 @@ class GUI:
                 
         return True
 
-    def draw_game(self, game: Game, selected: tuple):
-        """Display current state of the game."""
+    def draw_background(self):
+        """Display the background."""
         self.win.blit(self.background, (0, 0))
-        self.draw_grid(game.board, selected)
-        self.draw_pieces(game.board, selected)
-        pygame.display.update()
 
+    def update(self):
+        """Update the GUI."""
+        pygame.display.update()
+        #self.clock.tick(60)
+
+    def draw_menu(self, menu):
+        if menu.is_enabled():
+            menu.update(self.events)
+            menu.draw(self.win)
 
     def draw_grid(self, board, selected: tuple):
         """Display the board, including nodes, pieces and edges."""
         gap = (self.win.get_width() - PADDING) / (board.ring_number * 2)
-        center = (self.win.get_width() / 2, self.win.get_height() / 2 + PADDING / 3)
+        center = (self.win.get_width() / 2, self.win.get_height() / 2)
         pygame.draw.circle(self.win, EMPTY_COLOR, center, gap * board.ring_number + PIECE_RADIUS / 2 , LINE_WIDTH)
         for node in board.nodes:
             pos = self.get_pos(board, (node.level, node.pos))
@@ -76,7 +85,7 @@ class GUI:
 
                 pygame.draw.line(self.win, line_color, pos, edge_pos, LINE_WIDTH)
 
-    def draw_pieces(self, board, selected: tuple):
+    def draw_pieces(self, board):
         """Display the board, including nodes, pieces and edges."""
         for node in board.nodes:
             pos = self.get_pos(board, (node.level, node.pos))
@@ -91,7 +100,7 @@ class GUI:
         Get the screen coordinates from a tuple of board coordinates.
         Returns a tuple of the form (x, y)
         """
-        center = (self.win.get_width() / 2, self.win.get_height() / 2 + PADDING / 3)
+        center = (self.win.get_width() / 2, self.win.get_height() / 2)
         gap = (self.win.get_width() - PADDING) / (board.ring_number * 2) # gap between levels
         angle = 2 * 3.14 / board.nodes_per_ring
         offset = angle / 2 * (coords[0] // 2)
