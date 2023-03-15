@@ -35,8 +35,8 @@ class Bot:
     def minimax(self, game, depth, maximizing_player,evaluate_func,alpha=float('-inf'), beta=float('inf')):
         """Minimax algorithm with alpha-beta pruning."""
         if depth == 0 or game.over:
-            if game.over and depth > 0:
-                print(f"game over depth: {depth}")
+            # if game.over and depth > 0:
+            #     print(f"game over depth: {depth}")
                 
             return evaluate_func(game), None
 
@@ -58,9 +58,10 @@ class Bot:
                 alpha = max(alpha, value)
                 if beta <= alpha:
                     break  # beta cutoff
-            if depth == 6:
-                print(f"all moves: {game.board.get_moves(self.player)} \nlength: {len(game.board.get_moves(self.player))}")
-                print(f"best moves: {best_moves} \nlength: {len(best_moves)}")
+            # if depth == 6:
+            #     print(f"max all moves: {game.board.get_moves(self.player)} \nlength: {len(game.board.get_moves(self.player))}")
+            #     print(f"max best moves: {best_moves} \nlength: {len(best_moves)}")
+            
             best_move = choice(best_moves)[0]
             return value, best_move
         else:
@@ -81,9 +82,10 @@ class Bot:
                 beta = min(beta, value)
                 if beta <= alpha:
                     break  # alpha cutoff
-            if depth == 6:
-                print(f"all moves: {game.board.get_moves(self.opponent())} \nlength: {len(game.board.get_moves(self.opponent()))}")
-                print(f"best moves: {best_moves} \nlength: {len(best_moves)}")
+            # if depth == 6:
+                # print(f"min all moves2: {game.board.get_moves(self.opponent())} \nlength: {len(game.board.get_moves(self.opponent()))}")
+                # print(f"min best moves2: {best_moves} \nlength: {len(best_moves)}")
+            
             best_move = choice(best_moves)[0]
             
             
@@ -107,13 +109,19 @@ class Bot:
         board = game.board
         for node in board.nodes:
             if node.piece == self.player:
+                if game.over and game.winner != self.player: 
+                    # print("opponent win \n")
+                    return -100
                 for edge in node.edges:
                     if board.nodes[edge].piece == 0:
                         result += 1
             elif node.piece == self.opponent():
+                if game.over and game.winner == self.player: 
+                    # print("my win \n")
+                    return 100
                 for edge in node.edges:
                     if board.nodes[edge].piece == 0:
-                        result -= 1
+                        result -= 2
         return result
 
     def opponent(self):
