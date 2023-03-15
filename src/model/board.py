@@ -154,8 +154,8 @@ class Board:
         edges = self.nodes[self.to_index(piece)].edges
         for edge in edges:
             if self.is_bound(self.to_coords(edge)):
-                return True
-        return False
+                return True, self.to_coords(edge)
+        return False, None
 
     def get_moves(self, player: int):
         """Get a list of available moves for a player."""

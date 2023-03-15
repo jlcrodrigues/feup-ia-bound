@@ -3,6 +3,8 @@ import math
 
 from random import choice
 
+BLACK = 1
+WHITE = 2
 
 class Bot:
     """
@@ -13,8 +15,12 @@ class Bot:
         self.player = player
         if difficulty == 0:
             self.get_move = self.play_random
-        if difficulty == 1:
-            self.get_move = self.play_with_minimax
+        elif difficulty == 1:
+            self.get_move = self.play_difficulty_1
+        elif difficulty == 2:
+            self.get_move = self.play_difficulty_2
+        elif difficulty == 3:
+            self.get_move = self.play_difficulty_3      
 
     def play(self, game):
         """Play a move. This function redirects the bot to the correct difficulty function."""
@@ -24,54 +30,72 @@ class Bot:
         """Play a random move."""
         return choice(game.board.get_moves(self.player))
 
-    def mate_in_one(self, game):
-        for move in game.board.get_moves(game.player):
-            print(f"move: {move}")
-            newgame = copy.deepcopy(game)
-            newgame.move(move[0], move[1])
-            if newgame.board.did_bound(move[1]):
-                print(f"bound 1")
-                return 1, move
-        print("no bound possible")
-        return 0, move
-
-    def play_with_minimax(self, game):
+    def play_difficulty_1(self, game):
         """Play a move using the minimax algorithm."""
-        print("playing")
-        _ , move = self.minimax(game, 0, -math.inf, math.inf, True, self.mate_in_one)
+        _, move = self.minimax(game, 2, True,self.game_is_over)
+        return move
+    
+    def play_difficulty_2(self, game):
+        """Play a move using the minimax algorithm."""
+        _, move = self.minimax(game, 4, True,self.game_is_over)
+        return move
+    
+    def play_difficulty_3(self, game):
+        """Play a move using the minimax algorithm."""
+        _, move = self.minimax(game, 6, True,self.game_is_over)
         return move
 
-
-    def minimax(self, game, depth, alpha, beta, maximizing, evaluate_func):
+    def minimax(self, game, depth, maximizing_player,evaluate_func,alpha=float('-inf'), beta=float('inf')):
+        """Minimax algorithm with alpha-beta pruning."""
         if depth == 0 or game.over:
-            return evaluate_func(game)
-        if maximizing:
-            maxEval = -math.inf
-            bestMove = None
-            for move in game.board.get_moves(game.player):
-                newgame = copy.deepcopy(game)
-                newgame.move(move[0], move[1])
-                evaluation, _ = self.minimax(
-                    newgame, depth - 1, alpha, beta, False, evaluate_func)
-                if evaluation > maxEval:
-                    maxEval = evaluation
-                    bestMove = move
-                alpha = max(alpha, evaluation)
+            return evaluate_func(game), None
+
+        if maximizing_player:
+            value = float('-inf')
+            best_move = None
+            for move in game.board.get_moves(self.player):
+                #print("maximizing")
+                copy_game = copy.deepcopy(game)
+                #print(f"player: {copy_game.player}, move: {move}")
+                copy_game.move(move[0],move[1])
+                new_value, _ = self.minimax(copy_game, depth - 1, False,evaluate_func,alpha,beta)
+                if new_value > value:
+                    value = new_value
+                    best_move = move
+                alpha = max(alpha, value)
                 if beta <= alpha:
-                    break
-            return maxEval, bestMove
+                    break  # beta cutoff
+            return value, best_move
         else:
-            minEval = math.inf
-            bestMove = None
-            for move in game.board.get_moves(game.player):
-                newgame = copy.deepcopy(game)
-                newgame.move(move[0], move[1])
-                evaluation, _ = self.minimax(
-                    newgame, depth - 1, alpha, beta, True, evaluate_func)
-                if evaluation < minEval:
-                    minEval = evaluation
-                    bestMove = move
-                beta = min(beta, evaluation)
+            value = float('inf')
+            best_move = None
+            for move in game.board.get_moves(self.opponent()):
+                #print("minimizing")
+                copy_game = copy.deepcopy(game)
+                #print(f"player: {copy_game.player}, move: {move}")
+                copy_game.move(move[0],move[1])
+                new_value, _ = self.minimax(copy_game, depth - 1, True,evaluate_func,alpha,beta)
+                if new_value < value:
+                    value = new_value
+                    best_move = move
+                beta = min(beta, value)
                 if beta <= alpha:
-                    break
-            return minEval, bestMove
+                    break  # alpha cutoff
+            return value, best_move
+
+    def game_is_over(self, game):
+        """Evaluation function that checks if the game is over."""
+        if game.over:
+            #print("game over")
+            if game.winner == self.player:
+                #print("win")
+                return float('inf')
+            else:
+                #print("lost")
+                return float('-inf')
+        else:
+            return 0
+
+    def opponent(self):
+        """Returns the opponent's player color."""
+        return BLACK if self.player == WHITE else WHITE

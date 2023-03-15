@@ -11,7 +11,7 @@ class GameController:
     Players can either be a Bot instance or None (for human players).
     """
     def __init__(self, player_1, player_2, gui=None):
-        if (gui == None and (player_1 == None or player_2)):
+        if (gui == None and (player_1 == None or player_2 == None)):
             raise ValueError("If no GUI is provided, both players must be bots.")
         self.game = Game()
         self.players = {}
@@ -27,11 +27,13 @@ class GameController:
         """Play out a full game."""
         while (not self.game.over):
             self.step()
-             
-        while (True): # TODO looping so the window doesn't close
-            self.view.step()
-
-        return self.game.player
+        
+               
+        self.view.step()
+            
+        #sleep(5)
+        
+        return self.game.winner
 
     def step(self):
         """Play one round of the game."""
@@ -52,7 +54,7 @@ class GameController:
         self.game.move(next_move[0], next_move[1])
 
         if (self.game.over):
-            print("Game ended, winner: ", str(self.game.player), " , rounds: " , str(self.rounds))
+            print("Game ended, winner: ", str(self.game.winner), " , rounds: " , str(self.rounds))
             return True
 
         self.next_player()
