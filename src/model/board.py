@@ -13,7 +13,7 @@ class Node:
     """
     def __init__(self, level: int, pos: int, edges=None):
         self.level = level
-        self.piece = 0 # 1 for white, 2 for black, 0 for none
+        self.piece = 0 # 1 for black, 2 for white, 0 for none
         self.pos = pos
         if edges is None:
             edges = set()

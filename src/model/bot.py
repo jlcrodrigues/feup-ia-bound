@@ -100,6 +100,20 @@ class Bot:
         else:
             return 0
 
+    def eval_func_1(self,game):
+        result = 0
+        board = game.board
+        for node in board.nodes:
+            if node.piece == self.player:
+                for edge in node.edges:
+                    if board.nodes[edge].piece == 0:
+                        result += 1
+            else:
+                for edge in node.edges:
+                    if board.nodes[edge].piece == 0:
+                        result -= 1
+        return result
+
     def opponent(self):
         """Returns the opponent's player color."""
         return BLACK if self.player == WHITE else WHITE
