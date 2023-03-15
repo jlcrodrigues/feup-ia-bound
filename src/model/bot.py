@@ -28,7 +28,7 @@ class Bot:
 
     def play_difficulty_1(self, game):
         """Play a move using the minimax algorithm."""
-        _, move = self.minimax(game, 6, True,self.eval_func_1)
+        _, move = self.minimax(game, 4, True,self.evaluate_f1)
         return move
     
 
@@ -37,7 +37,6 @@ class Bot:
         if depth == 0 or game.over:
             # if game.over and depth > 0:
             #     print(f"game over depth: {depth}")
-                
             return evaluate_func(game), None
 
         if maximizing_player:
@@ -61,7 +60,6 @@ class Bot:
             # if depth == 6:
             #     print(f"max all moves: {game.board.get_moves(self.player)} \nlength: {len(game.board.get_moves(self.player))}")
             #     print(f"max best moves: {best_moves} \nlength: {len(best_moves)}")
-            
             best_move = choice(best_moves)[0]
             return value, best_move
         else:
@@ -87,42 +85,45 @@ class Bot:
                 # print(f"min best moves2: {best_moves} \nlength: {len(best_moves)}")
             
             best_move = choice(best_moves)[0]
-            
-            
             return value, best_move
-
+    
+    """Evaluation function that checks if the game is over."""
     def game_is_over(self, game):
-        """Evaluation function that checks if the game is over."""
         if game.over:
-            #print("game over")
             if game.winner == self.player:
-                #print("win")
-                return 1000
+                return 100
             else:
-                #print("lost")
-                return -1000
+                return -100
         else:
             return 0
 
-    def eval_func_1(self,game):
+    def empty_spaces(self,game):
         result = 0
         board = game.board
         for node in board.nodes:
+            spaces = 0
             if node.piece == self.player:
-                if game.over and game.winner != self.player: 
-                    # print("opponent win \n")
-                    return -100
                 for edge in node.edges:
                     if board.nodes[edge].piece == 0:
+                        spaces += 1
+                        #foreach white space around player piece
                         result += 1
+                #if a player piece is almost bound
+                if spaces == 1:
+                    result -= 10
             elif node.piece == self.opponent():
-                if game.over and game.winner == self.player: 
-                    # print("my win \n")
-                    return 100
                 for edge in node.edges:
                     if board.nodes[edge].piece == 0:
-                        result -= 2
+                        spaces += 1
+                        #foreach white space around opponent piece
+                        result -= 1
+                #if an opponent piece is almost bound 
+                if spaces == 1:
+                    result += 10
         return result
+    
+    def evaluate_f1(self,game):
+        return self.game_is_over(game) + self.empty_spaces(game)
 
     def opponent(self):
         """Returns the opponent's player color."""
