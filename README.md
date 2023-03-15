@@ -7,7 +7,7 @@ Bound game developed in Python.
 Assuming python is installed, run the main file:
 
 ```bash
-pip install requirements.txt
+pip install -r requirements.txt
 cd src
 python src/main.py
 ```
