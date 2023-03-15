@@ -65,6 +65,8 @@ class Bot:
                 alpha = max(alpha, value)
                 if beta <= alpha:
                     break  # beta cutoff
+            if best_move == None:
+                best_move = choice(game.board.get_moves(self.player)) #random move
             return value, best_move
         else:
             value = float('inf')
@@ -81,6 +83,8 @@ class Bot:
                 beta = min(beta, value)
                 if beta <= alpha:
                     break  # alpha cutoff
+            if best_move == None:
+                best_move = choice(game.board.get_moves(self.opponent())) #random move
             return value, best_move
 
     def game_is_over(self, game):
