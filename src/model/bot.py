@@ -16,11 +16,7 @@ class Bot:
         if difficulty == 0:
             self.get_move = self.play_random
         elif difficulty == 1:
-            self.get_move = self.play_difficulty_1
-        elif difficulty == 2:
-            self.get_move = self.play_difficulty_2
-        elif difficulty == 3:
-            self.get_move = self.play_difficulty_3      
+            self.get_move = self.play_difficulty_1     
 
     def play(self, game):
         """Play a move. This function redirects the bot to the correct difficulty function."""
@@ -32,59 +28,65 @@ class Bot:
 
     def play_difficulty_1(self, game):
         """Play a move using the minimax algorithm."""
-        _, move = self.minimax(game, 2, True,self.game_is_over)
+        _, move = self.minimax(game, 6, True,self.eval_func_1)
         return move
     
-    def play_difficulty_2(self, game):
-        """Play a move using the minimax algorithm."""
-        _, move = self.minimax(game, 4, True,self.game_is_over)
-        return move
-    
-    def play_difficulty_3(self, game):
-        """Play a move using the minimax algorithm."""
-        _, move = self.minimax(game, 6, True,self.game_is_over)
-        return move
 
     def minimax(self, game, depth, maximizing_player,evaluate_func,alpha=float('-inf'), beta=float('inf')):
         """Minimax algorithm with alpha-beta pruning."""
         if depth == 0 or game.over:
+            if game.over and depth > 0:
+                print(f"game over depth: {depth}")
+                
             return evaluate_func(game), None
 
         if maximizing_player:
             value = float('-inf')
             best_move = None
+            best_moves = []
             for move in game.board.get_moves(self.player):
                 #print("maximizing")
                 copy_game = copy.deepcopy(game)
                 #print(f"player: {copy_game.player}, move: {move}")
                 copy_game.move(move[0],move[1])
                 new_value, _ = self.minimax(copy_game, depth - 1, False,evaluate_func,alpha,beta)
+                if new_value == value:
+                    best_moves.append((move,new_value))
                 if new_value > value:
                     value = new_value
-                    best_move = move
+                    best_moves = [(move,new_value)]
                 alpha = max(alpha, value)
                 if beta <= alpha:
                     break  # beta cutoff
-            if best_move == None:
-                best_move = choice(game.board.get_moves(self.player)) #random move
+            if depth == 6:
+                print(f"all moves: {game.board.get_moves(self.player)} \nlength: {len(game.board.get_moves(self.player))}")
+                print(f"best moves: {best_moves} \nlength: {len(best_moves)}")
+            best_move = choice(best_moves)[0]
             return value, best_move
         else:
             value = float('inf')
             best_move = None
+            best_moves = []
             for move in game.board.get_moves(self.opponent()):
                 #print("minimizing")
                 copy_game = copy.deepcopy(game)
                 #print(f"player: {copy_game.player}, move: {move}")
                 copy_game.move(move[0],move[1])
                 new_value, _ = self.minimax(copy_game, depth - 1, True,evaluate_func,alpha,beta)
+                if new_value == value:
+                    best_moves.append((move,new_value))
                 if new_value < value:
                     value = new_value
-                    best_move = move
+                    best_moves = [(move,new_value)]
                 beta = min(beta, value)
                 if beta <= alpha:
                     break  # alpha cutoff
-            if best_move == None:
-                best_move = choice(game.board.get_moves(self.opponent())) #random move
+            if depth == 6:
+                print(f"all moves: {game.board.get_moves(self.opponent())} \nlength: {len(game.board.get_moves(self.opponent()))}")
+                print(f"best moves: {best_moves} \nlength: {len(best_moves)}")
+            best_move = choice(best_moves)[0]
+            
+            
             return value, best_move
 
     def game_is_over(self, game):
@@ -93,10 +95,10 @@ class Bot:
             #print("game over")
             if game.winner == self.player:
                 #print("win")
-                return float('inf')
+                return 1000
             else:
                 #print("lost")
-                return float('-inf')
+                return -1000
         else:
             return 0
 
@@ -108,7 +110,7 @@ class Bot:
                 for edge in node.edges:
                     if board.nodes[edge].piece == 0:
                         result += 1
-            else:
+            elif node.piece == self.opponent():
                 for edge in node.edges:
                     if board.nodes[edge].piece == 0:
                         result -= 1

@@ -11,12 +11,12 @@ from controller.game_controller import GameController
 def main_dev():
     player1_wins = 0
     player2_wins = 0
-    games = 10
+    games = 1000
     
     for i in range(games):
         print("Game: ", i)
         # create a game controller with two bots
-        game_controller = GameController(Bot(1, 1), Bot(2, 3))
+        game_controller = GameController(Bot(1,1), Bot(2, 0))
         # play the game
         winner = game_controller.play()
         #keep track of the results
