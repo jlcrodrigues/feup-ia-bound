@@ -1,4 +1,3 @@
-import pygame
 import pygame_menu
 from view.theme import *
 
