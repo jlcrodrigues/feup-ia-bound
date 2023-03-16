@@ -5,9 +5,11 @@ TEXT_PATH = '../assets/text/bot/'
 MAX_DIFFICULTY = 2
 
 class BotMenuView:
-    def __init__(self, gui):
+    """Renders the difficulty selection menu."""
+    def __init__(self, gui, text='Choose diffifulty'):
         self.gui = gui
         self.start = False
+        self.text = text
 
         self.selection = (0, 0) # (bot, diffculty)
 
@@ -16,24 +18,12 @@ class BotMenuView:
 
         self.init_theme()
         self.menu = pygame_menu.Menu('', gui.get_width(), gui.get_height(),
-                       theme=self.theme)
+                       theme=self.theme, center_content=False)
 
         self.init_menu()
 
     def init_menu(self):
         """Define all the widgets needed on the menu."""
-        self.bot_labels = [pygame_menu.widgets.Label('Hello'), pygame_menu.widgets.Label('World')]
-
-        self.menu.add.label(
-            'Choose bot diffifulty',
-            font_name=FONT_PATH,
-            font_size=40)
-
-        self.menu.add.selector('',
-            [('Tiago', 0),
-              ('Martim', 1),
-              ('Luis', 2)],
-                onchange = self.change_bot)
         self.menu.add.button(
             '<',
             lambda : self.close(),
@@ -43,11 +33,22 @@ class BotMenuView:
             selection_color = SELECTED_COLOR
         )
         self.menu.add.label(
+            self.text,
+            font_name=FONT_PATH,
+            font_size=40)
+
+        self.menu.add.selector('',
+            [('Tiago', 0),
+              ('Martim', 1),
+              ('Luis', 2)],
+                onchange = self.change_bot,)
+        self.menu.add.label(
             self.descriptions[0],
             font_name=FONT_PATH,
-            font_size=30)
-        self.menu.add.button('play', self.start_game)
-        self.menu.add.button('quit', pygame_menu.events.EXIT)
+            font_size=25)
+        self.menu.add.button('play', self.start_game).translate(0, PADDING)
+         
+        self.menu.select_widget(self.menu.get_widgets()[2])
 
     def init_theme(self):
         """Define the menu theme."""
@@ -58,8 +59,8 @@ class BotMenuView:
         self.theme.background_color = pygame_menu.BaseImage(
             image_path="../assets/images/background.png"
         )
+        self.theme.title = False
         self.theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_NONE
-        self.theme.title_font = self.gui.font
         self.theme.widget_font = self.gui.font
     
     def load_texts(self):

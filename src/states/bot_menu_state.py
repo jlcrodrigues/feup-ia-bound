@@ -11,5 +11,6 @@ class BotMenuState(State):
         if self.controller.play():
             from states.game_state import GameState
             return GameState(self.gui, self.controller.players)
+
         from states.menu_state import MenuState
         return MenuState(self.gui)

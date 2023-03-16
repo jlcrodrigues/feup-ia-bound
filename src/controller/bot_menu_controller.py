@@ -6,7 +6,8 @@ class BotMenuController:
     def __init__(self, gui, mode: int):
         self.gui = gui
         self.mode = mode
-        self.view = BotMenuView(gui)
+        text = "Choose your opponent" if mode == 2 else "Choose the first CPU"
+        self.view = BotMenuView(gui, text)
         self.players = [None, None]
 
     def play(self) -> bool:
@@ -22,7 +23,7 @@ class BotMenuController:
         self.players[pos] = Bot(pos + 1, selection[0])
 
         if self.mode > 2:
-            self.view = BotMenuView(self.gui)
+            self.view = BotMenuView(self.gui, "Choose the second CPU")
             if not self.view.step():
                 return False
             selection = self.view.selection
