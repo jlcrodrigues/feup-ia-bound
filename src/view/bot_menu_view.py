@@ -1,12 +1,14 @@
 import pygame_menu
 from view.theme import *
+from view.menu import Menu
 
 TEXT_PATH = '../assets/text/bot/'
 MAX_DIFFICULTY = 2
 
-class BotMenuView:
+class BotMenuView(Menu):
     """Renders the difficulty selection menu."""
     def __init__(self, gui, text='Choose diffifulty'):
+        super().__init__(gui)
         self.gui = gui
         self.start = False
         self.text = text
@@ -15,10 +17,6 @@ class BotMenuView:
 
         self.descriptions = []
         self.load_texts()
-
-        self.init_theme()
-        self.menu = pygame_menu.Menu('', gui.get_width(), gui.get_height(),
-                       theme=self.theme, center_content=False)
 
         self.init_menu()
 
@@ -50,19 +48,6 @@ class BotMenuView:
          
         self.menu.select_widget(self.menu.get_widgets()[2])
 
-    def init_theme(self):
-        """Define the menu theme."""
-        self.theme = pygame_menu.Theme()
-        self.theme.widget_font_color = EMPTY_COLOR
-        self.theme.selection_color = SELECTED_COLOR
-
-        self.theme.background_color = pygame_menu.BaseImage(
-            image_path="../assets/images/background.png"
-        )
-        self.theme.title = False
-        self.theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_NONE
-        self.theme.widget_font = self.gui.font
-    
     def load_texts(self):
         """Load bot descriptions from files."""
         for i in range(0, MAX_DIFFICULTY + 1):

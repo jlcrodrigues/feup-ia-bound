@@ -1,24 +1,17 @@
+from view.menu import Menu
 from view.gui import GUI
 from view.theme import *
 import pygame_menu
 
-class GameView():
+class GameView(Menu):
     def __init__(self, gui, game):
-        self.gui = gui
+        super().__init__(gui, False)
         self.game = game
         self.selected = None
         self.exit = False
 
-        theme = pygame_menu.Theme()
-        theme.title = False  # Hide the menu title
-        theme.background_color = (0,0,0,0)
-        theme.border_width = 0
-        theme.widget_box_arrow_color = (0,0,0,0)
-
         self.playing_color = PLAYER_1_COLOR
 
-        self.menu = pygame_menu.Menu('', gui.get_width(), gui.get_height(),
-                                     theme=theme, center_content=False)
         self.init_menu()
 
     def init_menu(self):
