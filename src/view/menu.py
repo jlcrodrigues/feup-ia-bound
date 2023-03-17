@@ -5,8 +5,12 @@ class Menu:
     def __init__(self, gui, background=True):
         self.gui = gui
         self.init_theme(background)
+
         self.menu = pygame_menu.Menu('', gui.get_width(), gui.get_height(),
                        theme=self.theme, center_content=False)
+        
+        self.init_sounds()
+
 
     def init_theme(self, background):
         """Define the menu theme."""
@@ -24,3 +28,10 @@ class Menu:
         self.theme.title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_NONE
         self.theme.title_font = self.gui.font
         self.theme.widget_font = self.gui.font
+
+    def init_sounds(self):
+        engine = pygame_menu.sound.Sound()
+        engine.set_sound(pygame_menu.sound.SOUND_TYPE_WIDGET_SELECTION, 
+                         '../assets/sound/effects/click.mp3')
+
+        self.menu.set_sound(engine, recursive=True)  # Apply on menu and all sub-menus

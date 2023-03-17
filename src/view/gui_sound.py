@@ -13,7 +13,7 @@ class GUISound:
         self.music = self.menu_music
         
         self.music_volume = 0.5
-        self.game_volume = 0.5
+        self.effects_volume = 0.5
 
         self.play_music()
     
@@ -33,3 +33,9 @@ class GUISound:
         """Play the current music."""
         self.music.set_volume(self.music_volume)
         self.music.play(LOOP)
+
+    def play_effect(self, effect):
+        """Play a sound effect."""
+        move = pygame.mixer.Sound(f"../assets/sound/effects/{effect}.mp3")
+        move.set_volume(self.effects_volume)
+        move.play()

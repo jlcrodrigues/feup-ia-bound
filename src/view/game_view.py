@@ -10,6 +10,7 @@ class GameView(Menu):
         self.selected = None
         self.exit = False
 
+        self.last_player = 1
         self.playing_color = PLAYER_1_COLOR
 
         self.init_menu()
@@ -34,6 +35,10 @@ class GameView(Menu):
 
     def step(self):
         if self.gui == None: return True
+
+        if (self.game.player != self.last_player):
+            self.gui.sound.play_effect('move')
+        self.last_player = self.game.player
 
         self.playing_color = PLAYER_1_COLOR if self.game.player == 1 else PLAYER_2_COLOR
         self.menu.get_widgets()[0].update({'font_color': self.playing_color})
