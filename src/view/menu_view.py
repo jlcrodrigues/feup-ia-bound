@@ -51,4 +51,6 @@ class MenuView:
 
     def start_game(self):
         self.menu.disable()
+        if self.mode == 1:
+            self.gui.sound.toggle_game()
         self.start = True

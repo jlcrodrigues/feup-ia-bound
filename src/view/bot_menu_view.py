@@ -80,6 +80,7 @@ class BotMenuView:
 
     def start_game(self):
         self.menu.disable()
+        self.gui.sound.toggle_game()
         self.start = True
 
     def close(self):

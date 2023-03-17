@@ -95,6 +95,7 @@ class GameView():
 
     def close(self):
         """Exit to the menu."""
+        self.gui.sound.toggle_menu()
         self.exit = True
 
     def draw_bottom_text(self):
