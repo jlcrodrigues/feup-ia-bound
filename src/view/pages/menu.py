@@ -1,7 +1,11 @@
+import pygame
 import pygame_menu
 from view.theme import *
 
 class Menu:
+    """This class defines a generic menu.
+    Different pages can extend it in order to use the same menu theme.
+    """
     def __init__(self, gui, background=True):
         self.gui = gui
         self.init_theme(background)
@@ -35,3 +39,7 @@ class Menu:
                          '../assets/sound/effects/click.mp3')
 
         self.menu.set_sound(engine, recursive=True)  # Apply on menu and all sub-menus
+    
+    def play_click(self):
+        self.sound = pygame.mixer.Sound("../assets/sound/effects/click.mp3")
+        self.sound.play()

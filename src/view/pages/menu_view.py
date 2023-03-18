@@ -1,8 +1,9 @@
 import pygame_menu
-from view.menu import Menu
+from view.pages.menu import Menu
 from view.theme import *
 
 class MenuView(Menu):
+    """Renders the main menu."""
     def __init__(self, gui):
         super().__init__(gui)
         self.mode = 1
@@ -32,6 +33,7 @@ class MenuView(Menu):
         return self.start
 
     def change_mode(self, _, new_mode: int):
+        self.play_click()
         self.mode = new_mode
 
     def start_game(self):

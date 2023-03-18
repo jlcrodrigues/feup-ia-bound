@@ -1,9 +1,10 @@
-from view.menu import Menu
+from view.pages.menu import Menu
 from view.gui import GUI
 from view.theme import *
 import pygame_menu
 
 class GameView(Menu):
+    """Renders the game page."""
     def __init__(self, gui, game):
         super().__init__(gui, False)
         self.game = game
@@ -11,6 +12,7 @@ class GameView(Menu):
         self.exit = False
 
         self.last_player = 1
+        self.played_over_sound = False
         self.playing_color = PLAYER_1_COLOR
 
         self.init_menu()
@@ -36,9 +38,7 @@ class GameView(Menu):
     def step(self):
         if self.gui == None: return True
 
-        if (self.game.player != self.last_player):
-            self.gui.sound.play_effect('move')
-        self.last_player = self.game.player
+        self.step_sound()
 
         self.playing_color = PLAYER_1_COLOR if self.game.player == 1 else PLAYER_2_COLOR
         self.menu.get_widgets()[0].update({'font_color': self.playing_color})
@@ -46,9 +46,7 @@ class GameView(Menu):
         self.gui.draw_background()
         self.gui.draw_grid(self.game.board, self.selected)
         self.gui.draw_pieces(self.game.board)
-
         self.draw_bottom_text()
-
         self.gui.draw_menu(self.menu)        
 
         self.gui.update()
@@ -56,6 +54,15 @@ class GameView(Menu):
         self.gui.handle_events()
 
         return self.exit
+
+    def step_sound(self):
+        """Play sounds according to game state."""
+        if (self.game.player != self.last_player):
+            self.gui.sound.play_effect('move')
+        self.last_player = self.game.player
+        if (self.game.over and not self.played_over_sound):
+            self.gui.sound.play_effect('bound')
+            self.played_over_sound = True
 
     def get_user_input(self):
         """Read the mouse state and determine if the player has made a move.

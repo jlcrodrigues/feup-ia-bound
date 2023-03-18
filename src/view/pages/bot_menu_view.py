@@ -1,6 +1,6 @@
 import pygame_menu
 from view.theme import *
-from view.menu import Menu
+from view.pages.menu import Menu
 
 TEXT_PATH = '../assets/text/bot/'
 MAX_DIFFICULTY = 2
@@ -62,6 +62,7 @@ class BotMenuView(Menu):
     def change_bot(self, _, new_bot: int):
         self.menu.get_widgets()[3].set_title(self.descriptions[new_bot])
         self.selection = (new_bot, 0)
+        self.play_click()
 
     def start_game(self):
         self.menu.disable()
