@@ -10,6 +10,7 @@ class GameView(Menu):
         self.game = game
         self.selected = None
         self.exit = False
+        self.is_restart = False
 
         self.last_player = 1
         self.played_over_sound = False
@@ -106,6 +107,11 @@ class GameView(Menu):
         self.gui.sound.toggle_menu()
         self.exit = True
 
+    def restart(self):
+        """Restart the game."""
+        self.disable_modal()
+        self.is_restart = True
+
     def draw_bottom_text(self):
         """Draws the text at the bottom of the screen depending on game state."""
         words = 'black to move' if self.game.player == 1 else 'white to move'
@@ -117,18 +123,20 @@ class GameView(Menu):
                                          self.gui.get_height() - text.get_height()))
 
     def init_modal(self):
-        """Creates the modal box."""
+        """Creates the pause modal box."""
         theme = self.theme 
-        theme.background_color = EMPTY_COLOR
-        theme.widget_font_color = SELECTED_COLOR
-        theme.selection_color = WHITE
-        theme.round_corners = 1
+        theme.background_color = SELECTED_COLOR
+        theme.widget_font_color = EMPTY_COLOR
+        theme.selection_color = EMPTY_COLOR
+        theme.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
         self.modal = pygame_menu.Menu('', self.gui.get_width() / 2, self.gui.get_height() / 2,
                        theme=theme, center_content=False, enabled=False)
 
-        self.modal.add.button('X', lambda : self.disable_modal(), float=False, align=pygame_menu.locals.ALIGN_RIGHT)
-        self.modal.add.button('Restart', lambda : self.restart())
-        self.modal.add.button('Exit', lambda : self.close())
+        self.modal.add.label('Paused').set_padding(30)
+        self.modal.add.button('resume', lambda : self.disable_modal())
+        self.modal.add.button('restart', lambda : self.restart())
+        self.modal.add.button('menu', lambda : self.close())
+        self.modal.add.button('quit', pygame_menu.events.EXIT)
 
     def enable_modal(self):
         """Enable the modal box."""

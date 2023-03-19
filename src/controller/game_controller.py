@@ -32,6 +32,13 @@ class GameController:
     def step(self):
         """Play one round of the game."""
         self.close = self.view.step()
+
+        if (self.view.is_restart):
+            self.game = Game()
+            self.view.game = self.game
+            self.view.is_restart = False
+            self.rounds = 0
+
         if (self.game.over): return
         if self.step_move():
             self.rounds += 1
