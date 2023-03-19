@@ -60,12 +60,12 @@ class GUI:
     def update(self):
         """Update the GUI."""
         pygame.display.update()
-        #self.clock.tick(60)
+        self.clock.tick(60)
 
     def draw_menu(self, menu):
         if menu.is_enabled():
-            menu.update(self.events)
             menu.draw(self.win)
+            menu.update(self.events)
 
     def draw_grid(self, board, selected: tuple):
         """Display the board, including nodes, pieces and edges."""

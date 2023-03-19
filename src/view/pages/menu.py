@@ -22,6 +22,7 @@ class Menu:
         self.theme.widget_font_color = EMPTY_COLOR
         self.theme.selection_color = SELECTED_COLOR
         self.theme.title = False  # Hide the menu title
+        self.theme.widget_selection_effect = pygame_menu.widgets.SimpleSelection()
 
         if background:
             self.theme.background_color = pygame_menu.BaseImage(

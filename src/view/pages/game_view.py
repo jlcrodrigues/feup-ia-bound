@@ -16,19 +16,22 @@ class GameView(Menu):
         self.playing_color = PLAYER_1_COLOR
 
         self.init_menu()
+        self.init_modal()
 
     def init_menu(self):
-        self.menu.add.label(
-            'bound',
-            font_name=FONT_PATH,
-            float=True,
-            font_color=EMPTY_COLOR,
-        )
         self.menu.add.button('').translate(-100, -100) # dummy button to avoid default selection
         self.menu.add.button(
             '<',
             lambda : self.close(),
             align=pygame_menu.locals.ALIGN_LEFT,
+            float=True,
+            font_color = EMPTY_COLOR,
+            selection_color = SELECTED_COLOR
+        )
+        self.menu.add.button(
+            '=',
+            lambda : self.enable_modal(),
+            align=pygame_menu.locals.ALIGN_RIGHT,
             float=True,
             font_color = EMPTY_COLOR,
             selection_color = SELECTED_COLOR
@@ -40,13 +43,12 @@ class GameView(Menu):
 
         self.step_sound()
 
-        self.playing_color = PLAYER_1_COLOR if self.game.player == 1 else PLAYER_2_COLOR
-        self.menu.get_widgets()[0].update({'font_color': self.playing_color})
-
         self.gui.draw_background()
         self.gui.draw_grid(self.game.board, self.selected)
         self.gui.draw_pieces(self.game.board)
         self.draw_bottom_text()
+
+        self.gui.draw_menu(self.modal)
         self.gui.draw_menu(self.menu)        
 
         self.gui.update()
@@ -68,6 +70,7 @@ class GameView(Menu):
         """Read the mouse state and determine if the player has made a move.
         The also view keeps the state of the selected piece in order to render possible moves.
         """
+        if self.modal.is_enabled(): return None 
         player = self.game.player
         pieces = self.game.board.pieces[player]
 
@@ -113,3 +116,27 @@ class GameView(Menu):
         self.gui.win.blit(text, (self.gui.get_width() / 2 - text.get_width() / 2,
                                          self.gui.get_height() - text.get_height()))
 
+    def init_modal(self):
+        """Creates the modal box."""
+        theme = self.theme 
+        theme.background_color = EMPTY_COLOR
+        theme.widget_font_color = SELECTED_COLOR
+        theme.selection_color = WHITE
+        theme.round_corners = 1
+        self.modal = pygame_menu.Menu('', self.gui.get_width() / 2, self.gui.get_height() / 2,
+                       theme=theme, center_content=False, enabled=False)
+
+        self.modal.add.button('X', lambda : self.disable_modal(), float=False, align=pygame_menu.locals.ALIGN_RIGHT)
+        self.modal.add.button('Restart', lambda : self.restart())
+        self.modal.add.button('Exit', lambda : self.close())
+
+    def enable_modal(self):
+        """Enable the modal box."""
+        self.modal.enable()
+        self.menu.disable()
+
+    def disable_modal(self):
+        """Disable the modal box."""
+        self.modal.disable()
+        self.menu.enable()
+        self.menu.get_widgets()[0].select(update_menu=True)
