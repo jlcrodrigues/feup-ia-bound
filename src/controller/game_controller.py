@@ -1,6 +1,6 @@
 from model.game import Game
 from model.bot import Bot
-from view.game_view import GameView
+from view.pages.game_view import GameView
 
 from time import sleep
 

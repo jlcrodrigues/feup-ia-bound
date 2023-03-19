@@ -1,4 +1,4 @@
-from view.menu_view import MenuView
+from view.pages.menu_view import MenuView
 
 class MenuController:
     def __init__(self, gui):

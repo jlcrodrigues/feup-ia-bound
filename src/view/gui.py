@@ -4,6 +4,7 @@ from math import sin, cos
 from model.game import Game
 from model.board import Board
 from view.theme import *
+from view.gui_sound import GUISound
 
 class GUI:
     """
@@ -18,6 +19,8 @@ class GUI:
         icon = pygame.image.load("../assets/images/icon.png")
         pygame.display.set_icon(icon)
         self.clock = pygame.time.Clock()
+
+        self.sound = GUISound()
 
         self.background = pygame.image.load("../assets/images/background.png")
 

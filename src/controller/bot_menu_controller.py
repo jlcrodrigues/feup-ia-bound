@@ -1,5 +1,5 @@
 from model.bot import Bot
-from view.bot_menu_view import BotMenuView
+from view.pages.bot_menu_view import BotMenuView
 from random import randint
 
 class BotMenuController:
