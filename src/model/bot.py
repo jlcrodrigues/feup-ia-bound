@@ -163,7 +163,7 @@ class Bot:
 
     def monte_carlo(self, game, bot):
         """Play a move using Monte Carlo Tree Search."""
-        print("monte carlo")
+        #print("monte carlo")
         root = TreeNode(game, None, None, bot)
         return root.best_move()
     
@@ -185,8 +185,10 @@ class TreeNode:
         return self._untried_moves
     
     def q(self):
-        """Return the quality value of the node."""
-        return self._results[self.game.player] / self.visits
+        """Return the action value (quality) of the node."""
+        wins = self._results[self.bot.player]
+        loses = self._results[self.bot.opponent()]
+        return wins - loses
     
     def n(self):
         """Return the number of visits of the node."""
@@ -224,9 +226,9 @@ class TreeNode:
         """Return True if the node has been fully expanded."""
         return len(self.untried_moves) == 0
     
-    def best_child(self, c_param=0.1):
+    def best_child(self, c_param=2):
         """Return the child with the highest UCB score."""
-        choices_weights = [(c.q() / (c.n())) + c_param * np.sqrt(2 * np.log(self.n()) / (c.n())) for c in self.children]
+        choices_weights = [(c.q() / (c.n())) + c_param * np.sqrt(np.log(self.n()) / (c.n())) for c in self.children]
         return self.children[np.argmax(choices_weights)]
     
     def _tree_policy(self):
@@ -260,8 +262,8 @@ class TreeNode:
             winner = leaf.rollout()
             leaf.backpropagate(winner)
             
-        print(self._tree_to_string(0))
+        #print(self._tree_to_string(0))
         
-        print("Best move: ", self.best_child().move)
+        #print("Best move: ", self.best_child().move)
 
         return self.best_child().move
