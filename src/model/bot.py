@@ -16,7 +16,9 @@ class Bot:
         if difficulty == 0:
             self.get_move = self.play_random
         elif difficulty == 1:
-            self.get_move = self.play_difficulty_1     
+            self.get_move = self.play_difficulty_1 
+        elif difficulty == 2:
+            self.get_move = self.play_difficulty_2   
 
     def play(self, game):
         """Play a move. This function redirects the bot to the correct difficulty function."""
@@ -28,7 +30,12 @@ class Bot:
 
     def play_difficulty_1(self, game):
         """Play a move using the minimax algorithm."""
-        _, move = self.minimax(game, 4, True,self.evaluate_f1)
+        _, move = self.minimax(game, 2, True,self.evaluate_f1)
+        return move
+    
+    def play_difficulty_2(self, game):
+        """Play a move using the minimax algorithm."""
+        _, move = self.minimax(game, 2, True,self.evaluate_f1)
         return move
     
 
@@ -42,62 +49,66 @@ class Bot:
         if maximizing_player:
             value = float('-inf')
             best_move = None
-            best_moves = []
+            # best_moves = []
             for move in game.board.get_moves(self.player):
                 #print("maximizing")
                 copy_game = copy.deepcopy(game)
                 #print(f"player: {copy_game.player}, move: {move}")
                 copy_game.move(move[0],move[1])
                 new_value, _ = self.minimax(copy_game, depth - 1, False,evaluate_func,alpha,beta)
-                if new_value == value:
-                    best_moves.append((move,new_value))
+                # if new_value == value:
+                #     best_moves.append((move,new_value))
                 if new_value > value:
                     value = new_value
-                    best_moves = [(move,new_value)]
+                    best_move = move 
                 alpha = max(alpha, value)
                 if beta <= alpha:
                     break  # beta cutoff
             # if depth == 6:
             #     print(f"max all moves: {game.board.get_moves(self.player)} \nlength: {len(game.board.get_moves(self.player))}")
             #     print(f"max best moves: {best_moves} \nlength: {len(best_moves)}")
-            best_move = choice(best_moves)[0]
+            if best_move == None:
+                best_move = choice(game.board.get_moves(self.player)) #random move            
             return value, best_move
         else:
             value = float('inf')
             best_move = None
-            best_moves = []
+            # best_moves = []
             for move in game.board.get_moves(self.opponent()):
                 #print("minimizing")
                 copy_game = copy.deepcopy(game)
                 #print(f"player: {copy_game.player}, move: {move}")
                 copy_game.move(move[0],move[1])
                 new_value, _ = self.minimax(copy_game, depth - 1, True,evaluate_func,alpha,beta)
-                if new_value == value:
-                    best_moves.append((move,new_value))
+                # if new_value == value:
+                #     best_moves.append((move,new_value))
                 if new_value < value:
                     value = new_value
-                    best_moves = [(move,new_value)]
+                    best_move = move
                 beta = min(beta, value)
                 if beta <= alpha:
                     break  # alpha cutoff
             # if depth == 6:
                 # print(f"min all moves2: {game.board.get_moves(self.opponent())} \nlength: {len(game.board.get_moves(self.opponent()))}")
-                # print(f"min best moves2: {best_moves} \nlength: {len(best_moves)}")
-            
-            best_move = choice(best_moves)[0]
+                # print(f"min best moves2: {best_moves} \nlength: {len(best_moves)}")           
+            if best_move == None:
+                best_move = choice(game.board.get_moves(self.player)) #random move
             return value, best_move
     
     """Evaluation function that checks if the game is over."""
     def game_is_over(self, game):
         if game.over:
             if game.winner == self.player:
-                return 100
+                return 1000
             else:
-                return -100
+                return -1000
         else:
             return 0
+        
+    # def available_moves(self,game):
+    #     return len(game.board.get_moves(self.player)) - len(game.board.get_moves(self.opponent()))
 
-    def empty_spaces(self,game):
+    def almost_bound(self,game):
         result = 0
         board = game.board
         for node in board.nodes:
@@ -106,24 +117,40 @@ class Bot:
                 for edge in node.edges:
                     if board.nodes[edge].piece == 0:
                         spaces += 1
-                        #foreach white space around player piece
-                        result += 1
-                #if a player piece is almost bound
                 if spaces == 1:
                     result -= 10
             elif node.piece == self.opponent():
                 for edge in node.edges:
                     if board.nodes[edge].piece == 0:
                         spaces += 1
-                        #foreach white space around opponent piece
-                        result -= 1
-                #if an opponent piece is almost bound 
                 if spaces == 1:
                     result += 10
         return result
     
+    def piece_coordination(self,game):
+        result = 0
+        board = game.board
+        for node in board.pieces[self.opponent()]:
+            for edge in board.nodes[board.to_index(node)].edges:
+                for snd_edge in board.nodes[edge].edges:
+                    if board.nodes[snd_edge].piece == self.player:
+                        result += 1
+                if board.nodes[edge].piece == self.player:
+                    result += 3
+        for node in board.pieces[self.player]:
+            for edge in board.nodes[board.to_index(node)].edges:
+                for snd_edge in board.nodes[edge].edges:
+                    if board.nodes[snd_edge].piece == self.opponent():
+                        result -= 1
+                if board.nodes[edge].piece == self.opponent():
+                    result -= 3
+        return result                    
+    
     def evaluate_f1(self,game):
-        return self.game_is_over(game) + self.empty_spaces(game)
+       return self.game_is_over(game) + self.almost_bound(game) 
+
+    def evaluate_f2(self,game):
+        return self.game_is_over(game) + self.almost_bound(game) + self.piece_coordination(game)
 
     def opponent(self):
         """Returns the opponent's player color."""
