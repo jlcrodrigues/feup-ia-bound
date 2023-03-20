@@ -13,6 +13,7 @@ class Bot:
 
     def __init__(self, player, difficulty):
         self.player = player
+        if (difficulty != 0): raise ValueError(f"That bot difficulty does not exist: {difficulty}")
         if difficulty == 0:
             self.get_move = self.play_random
         elif difficulty == 1:
