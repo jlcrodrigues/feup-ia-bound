@@ -185,11 +185,8 @@ class TreeNode:
         return self._untried_moves
     
     def q(self):
-        """Return the value of the node."""
-        wins = self._results[self.bot.player]
-        loses = self._results[self.bot.opponent()]
-        q = wins - loses
-        return q
+        """Return the quality value of the node."""
+        return self._results[self.game.player] / self.visits
     
     def n(self):
         """Return the number of visits of the node."""
