@@ -15,6 +15,7 @@ class GameView(Menu):
         self.played_over_sound = False
         self.playing_color = PLAYER_1_COLOR
 
+        if self.gui == None: return
         self.init_menu()
 
     def init_menu(self):
@@ -36,7 +37,8 @@ class GameView(Menu):
 
 
     def step(self):
-        if self.gui == None: return True
+        if self.gui == None:
+            return self.game.over
 
         self.step_sound()
 
