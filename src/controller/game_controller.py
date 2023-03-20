@@ -29,10 +29,7 @@ class GameController:
         while (not self.close):
             self.step()
         
-               
         self.view.step()
-            
-        #sleep(5)
         
         return self.game.winner
 

@@ -8,6 +8,7 @@ class Menu:
     """
     def __init__(self, gui, background=True):
         self.gui = gui
+        if gui == None: return
         self.init_theme(background)
 
         self.menu = pygame_menu.Menu('', gui.get_width(), gui.get_height(),
