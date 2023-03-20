@@ -7,6 +7,7 @@ class Game:
     def __init__(self):
         self.board = Board()
         self.player = BLACK
+        self.winner = None
         self.over = False
 
     def next_player(self):
@@ -18,9 +19,14 @@ class Game:
         if source == None or dest == None:
             raise Exception("Trying to move null play.")
         self.board.move(self.player, source, dest)
-
-        if (self.board.did_bound(dest)):
+        
+        game_over, piece = self.board.did_bound(dest)
+        
+        if (game_over):
             self.over = True
+            #print(f"Piece {piece} bound!")
+            bounded = self.board.nodes[self.board.to_index(piece)].piece
+            self.winner = WHITE if bounded == BLACK else BLACK 
             return
 
         self.next_player()
