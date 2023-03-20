@@ -35,6 +35,7 @@ class GameView(Menu):
             align=pygame_menu.locals.ALIGN_RIGHT,
             float=True,
             font_color = EMPTY_COLOR,
+            font_size=100,
             selection_color = SELECTED_COLOR
         )
 
@@ -125,12 +126,13 @@ class GameView(Menu):
     def init_modal(self):
         """Creates the pause modal box."""
         theme = self.theme 
-        theme.background_color = SELECTED_COLOR
         theme.widget_font_color = EMPTY_COLOR
-        theme.selection_color = EMPTY_COLOR
-        theme.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
-        self.modal = pygame_menu.Menu('', self.gui.get_width() / 2, self.gui.get_height() / 2,
-                       theme=theme, center_content=False, enabled=False)
+        theme.selection_color = SELECTED_COLOR
+        #theme.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
+        theme.background_color = pygame_menu.BaseImage(
+                image_path="../assets/images/modal.png")
+        self.modal = pygame_menu.Menu('', self.gui.get_width(), self.gui.get_height(),
+                       theme=theme, center_content=True, enabled=False)
 
         self.modal.add.label('Paused').set_padding(30)
         self.modal.add.button('resume', lambda : self.disable_modal())
