@@ -13,7 +13,7 @@ class Node:
     """
     def __init__(self, level: int, pos: int, edges=None):
         self.level = level
-        self.piece = 0 # 1 for white, 2 for black, 0 for none
+        self.piece = 0 # 1 for black, 2 for white, 0 for none
         self.pos = pos
         if edges is None:
             edges = set()
@@ -154,8 +154,8 @@ class Board:
         edges = self.nodes[self.to_index(piece)].edges
         for edge in edges:
             if self.is_bound(self.to_coords(edge)):
-                return True
-        return False
+                return True, self.to_coords(edge)
+        return False, None
 
     def get_moves(self, player: int):
         """Get a list of available moves for a player."""

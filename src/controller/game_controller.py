@@ -28,6 +28,10 @@ class GameController:
         """Play out a full game."""
         while (not self.close):
             self.step()
+        
+        self.view.step()
+        
+        return self.game.winner
 
     def step(self):
         """Play one round of the game."""
@@ -48,14 +52,14 @@ class GameController:
         if self.player == None: 
             next_move = self.get_user_input()
         else:
-            next_move = self.player.get_move(self.game.board)
+            next_move = self.player.get_move(self.game)
 
         if next_move == None: return False
 
         self.game.move(next_move[0], next_move[1])
 
         if (self.game.over):
-            print("Game ended, winner: ", str(self.game.player), " , rounds: " , str(self.rounds))
+            print("Game ended, winner: ", str(self.game.winner), " , rounds: " , str(self.rounds))
             return True
 
         self.next_player()
