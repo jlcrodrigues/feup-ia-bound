@@ -2,6 +2,7 @@ from view.pages.menu import Menu
 from view.gui import GUI
 from view.theme import *
 import pygame_menu
+import pygame
 
 class GameView(Menu):
     """Renders the game page."""
@@ -29,16 +30,17 @@ class GameView(Menu):
             float=True,
             font_color = EMPTY_COLOR,
             selection_color = SELECTED_COLOR
-        )
+        ).translate(0,-3)
+        self.menu.add.label('bound', align=pygame_menu.locals.ALIGN_CENTER, float=True).translate(0,-3)
         self.menu.add.button(
-            '=',
+            '...',
             lambda : self.enable_modal(),
             align=pygame_menu.locals.ALIGN_RIGHT,
             float=True,
             font_color = EMPTY_COLOR,
             font_size=100,
             selection_color = SELECTED_COLOR
-        )
+        ).translate(0,-10)
 
 
     def step(self):
@@ -47,16 +49,18 @@ class GameView(Menu):
 
         self.step_sound()
 
+        #draw game
         self.gui.draw_background()
         self.gui.draw_grid(self.game.board, self.selected)
         self.gui.draw_pieces(self.game.board)
-        self.draw_bottom_text()
 
+        #draw ui
+        self.draw_player_info()
+        self.draw_top_bar()
         self.gui.draw_menu(self.modal)
         self.gui.draw_menu(self.menu)        
 
         self.gui.update()
-
         self.gui.handle_events()
 
         return self.exit
@@ -115,15 +119,17 @@ class GameView(Menu):
         self.disable_modal()
         self.is_restart = True
 
-    def draw_bottom_text(self):
-        """Draws the text at the bottom of the screen depending on game state."""
-        words = 'black to move' if self.game.player == 1 else 'white to move'
-        if (self.game.over):
-            words = 'black wins' if self.game.player == 1 else 'white wins'
-
-        text = self.gui.font_small.render(words, True, self.playing_color)
-        self.gui.win.blit(text, (self.gui.get_width() / 2 - text.get_width() / 2,
-                                         self.gui.get_height() - text.get_height()))
+    def draw_player_info(self):
+        """Draws the current player info."""
+        px = 0.1 * PADDING
+        py = 0.5 * PADDING 
+        text1 = self.gui.font_small.render("Player 1", True,
+                self.playing_color if self.game.player == 1 else EMPTY_COLOR)
+        text2 = self.gui.font_small.render("Player 2", True,
+                self.playing_color if self.game.player == 2 else EMPTY_COLOR)
+        self.gui.win.blit(text1, (px, py))
+        self.gui.win.blit(text2, (-px + self.gui.get_width() - text2.get_width(),
+                                         py))
 
     def init_modal(self):
         """Creates the pause modal box."""
@@ -145,10 +151,19 @@ class GameView(Menu):
     def enable_modal(self):
         """Enable the modal box."""
         self.modal.enable()
-        self.menu.disable()
+        #self.menu.disable()
 
     def disable_modal(self):
         """Disable the modal box."""
         self.modal.disable()
-        self.menu.enable()
+        #self.menu.enable()
         self.menu.get_widgets()[0].select(update_menu=True)
+    
+    def draw_top_bar(self):
+        """Draw the top nav bar."""
+        height = 0.4 * PADDING
+        pygame.draw.rect(self.gui.win, BACKGROUND_COLOR,
+                          [0, 0, self.gui.get_width(), height])
+
+        pygame.draw.line(self.gui.win, SELECTED_COLOR,
+                          (0, height - 1), (self.gui.get_width(), height - 1), 2)

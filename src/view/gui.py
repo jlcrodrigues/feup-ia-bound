@@ -70,7 +70,7 @@ class GUI:
     def draw_grid(self, board, selected: tuple):
         """Display the board, including nodes, pieces and edges."""
         gap = (self.win.get_width() - PADDING) / (board.ring_number * 2)
-        center = (self.win.get_width() / 2, self.win.get_height() / 2)
+        center = self.get_board_center()
         angle = 2 * 3.14 / board.nodes_per_ring
         for node in board.nodes:
             pos = self.get_pos(board, (node.level, node.pos))
@@ -115,13 +115,16 @@ class GUI:
         Get the screen coordinates from a tuple of board coordinates.
         Returns a tuple of the form (x, y)
         """
-        center = (self.win.get_width() / 2, self.win.get_height() / 2)
+        center = self.get_board_center()
         gap = (self.win.get_width() - PADDING) / (board.ring_number * 2) # gap between levels
         angle = 2 * 3.14 / board.nodes_per_ring
         offset = angle / 2 * (coords[0] // 2)
         x = cos(offset + coords[1] * angle) * (coords[0] + 1) * gap + center[0]
         y = sin(offset + coords[1] * angle) * (coords[0] + 1) * gap + center[1]
         return (int(x), int(y))
+
+    def get_board_center(self) -> (int):
+        return (self.win.get_width() / 2, self.win.get_height() / 2 + 0.3 * PADDING)
 
     def get_color(self, node):
         """Get the current color of a node."""
