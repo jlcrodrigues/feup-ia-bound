@@ -12,5 +12,6 @@ class GameState(State):
 
     def step(self):
         self.controller.play()
+        if self.gui.closed: return None
         from states.menu_state import MenuState
         return MenuState(self.gui)

@@ -6,7 +6,7 @@ import pygame
 
 class GameView(Menu):
     """Renders the game page."""
-    def __init__(self, gui, game):
+    def __init__(self, gui, game, players: list):
         super().__init__(gui, False)
         self.game = game
         self.selected = None
@@ -16,6 +16,8 @@ class GameView(Menu):
         self.last_player = 1
         self.played_over_sound = False
         self.playing_color = PLAYER_1_COLOR
+        self.player1_name = players[0].name
+        self.player2_name = players[1].name
 
         if self.gui == None: return
         self.init_menu()
@@ -55,13 +57,13 @@ class GameView(Menu):
         self.gui.draw_pieces(self.game.board)
 
         #draw ui
-        self.draw_player_info()
         self.draw_top_bar()
+        self.draw_player_info()
         self.gui.draw_menu(self.modal)
         self.gui.draw_menu(self.menu)        
 
         self.gui.update()
-        self.gui.handle_events()
+        if not self.gui.handle_events(): self.exit = True
 
         return self.exit
 
@@ -119,18 +121,6 @@ class GameView(Menu):
         self.disable_modal()
         self.is_restart = True
 
-    def draw_player_info(self):
-        """Draws the current player info."""
-        px = 0.1 * PADDING
-        py = 0.5 * PADDING 
-        text1 = self.gui.font_small.render("Player 1", True,
-                self.playing_color if self.game.player == 1 else EMPTY_COLOR)
-        text2 = self.gui.font_small.render("Player 2", True,
-                self.playing_color if self.game.player == 2 else EMPTY_COLOR)
-        self.gui.win.blit(text1, (px, py))
-        self.gui.win.blit(text2, (-px + self.gui.get_width() - text2.get_width(),
-                                         py))
-
     def init_modal(self):
         """Creates the pause modal box."""
         theme = self.theme 
@@ -161,9 +151,29 @@ class GameView(Menu):
     
     def draw_top_bar(self):
         """Draw the top nav bar."""
-        height = 0.4 * PADDING
-        pygame.draw.rect(self.gui.win, BACKGROUND_COLOR,
-                          [0, 0, self.gui.get_width(), height])
+        y = 0.65 * PADDING
+        height = 0.3 * PADDING
 
-        pygame.draw.line(self.gui.win, SELECTED_COLOR,
-                          (0, height - 1), (self.gui.get_width(), height - 1), 2)
+        player_width = 110
+        if self.game.player == 1:
+            pygame.draw.rect(self.gui.win, SELECTED_COLOR,
+                            [0, y, player_width, height], 
+                            border_bottom_right_radius=5, border_top_right_radius=5)
+
+        if self.game.player == 2:
+            pygame.draw.rect(self.gui.win, SELECTED_COLOR,
+                            [self.gui.get_width() - player_width, y, player_width, height],
+                              border_bottom_left_radius=5, border_top_left_radius=5)
+
+    def draw_player_info(self):
+        """Draws the current player info."""
+        px = 0.1 * PADDING
+        py = 0.7 * PADDING 
+
+        text1 = self.gui.font_small.render(self.player1_name, True, PLAYER_1_COLOR)
+
+        text2 = self.gui.font_small.render(self.player2_name, True, PLAYER_2_COLOR)
+
+        self.gui.win.blit(text1, (px, py))
+        self.gui.win.blit(text2, (-px + self.gui.get_width() - text2.get_width(),
+                                         py))

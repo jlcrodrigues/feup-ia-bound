@@ -20,6 +20,8 @@ class GUI:
         pygame.display.set_icon(icon)
         self.clock = pygame.time.Clock()
 
+        self.closed = False
+
         self.sound = GUISound()
 
         self.background = pygame.image.load("../assets/images/background.png")
@@ -27,7 +29,6 @@ class GUI:
         self.mouse_pos = (-1, -1)
         self.mouse_pressed = (False, False, False)
 
-        #self.font = pygame.font.Font('../assets/fonts/immortal/IMMORTAL.ttf', 30)
         self.font = pygame.font.Font(FONT_PATH, 30)
         self.font_small = pygame.font.Font(FONT_PATH, 20)
         self.events = []
@@ -40,6 +41,7 @@ class GUI:
         for event in self.events:
             if event.type == pygame.QUIT:
                 self.close()
+                self.closed = True
                 return False
             if event.type == pygame.VIDEORESIZE:
                 old_win = self.win

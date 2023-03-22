@@ -1,5 +1,6 @@
 from model.game import Game
 from model.bot import Bot
+from model.player import Player
 from view.pages.game_view import GameView
 
 from time import sleep
@@ -10,7 +11,7 @@ class GameController:
     Can be executed without a view, so the bots are easier to test.
     Players can either be a Bot instance or None (for human players).
     """
-    def __init__(self, player_1, player_2, gui=None):
+    def __init__(self, player_1: Player, player_2: Player, gui=None):
         if (gui == None and (player_1 == None or player_2 == None)):
             raise ValueError("If no GUI is provided, both players must be bots.")
         self.game = Game()
@@ -22,14 +23,14 @@ class GameController:
         self.player_2 = player_2
         self.player = self.player_1
 
-        self.view = GameView(gui, self.game)
+        self.view = GameView(gui, self.game, [player_1, player_2])
 
     def play(self):
         """Play out a full game."""
         while (not self.close):
             self.step()
         
-        self.view.step()
+        #self.view.step()
         
         return self.game.winner
 
@@ -49,10 +50,10 @@ class GameController:
 
     def step_move(self):
         """Execute a move given by the current player."""
-        if self.player == None: 
-            next_move = self.get_user_input()
-        else:
+        if self.player.is_bot: 
             next_move = self.player.get_move(self.game)
+        else:
+            next_move = self.get_user_input()
 
         if next_move == None: return False
 
