@@ -1,4 +1,5 @@
-from model.board import Board, BLACK, WHITE
+from model.board import Board, BLACK, WHITE, DRAW
+
 
 class Game:
     """
@@ -9,6 +10,8 @@ class Game:
         self.player = BLACK
         self.winner = None
         self.over = False
+        self.history = {}
+        self.history[str(self.board.pieces)] = 1
 
     def next_player(self):
         """Switch players."""
@@ -22,6 +25,12 @@ class Game:
         
         game_over, piece = self.board.did_bound(dest)
         
+        
+        if(self.stalemate()):
+            self.over = True
+            self.winner = DRAW
+            return
+        
         if (game_over):
             self.over = True
             #print(f"Piece {piece} bound!")
@@ -31,3 +40,19 @@ class Game:
 
         self.next_player()
 
+    def stalemate(self):
+        """Check if the game is in a stalemate."""
+        
+        #sort pieces
+        sorted_pieces = {BLACK: sorted(self.board.pieces[BLACK]), WHITE: sorted(self.board.pieces[WHITE])}
+        
+        # Update the count for the current board
+        if str(sorted_pieces) in self.history:
+            self.history[str(sorted_pieces)] += 1
+        else:
+            self.history[str(sorted_pieces)] = 1
+
+        if self.history[str(sorted_pieces)] == 3:
+            return True
+        
+        return False
