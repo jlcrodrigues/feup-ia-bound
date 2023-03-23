@@ -4,7 +4,7 @@ import numpy as np
 from collections import defaultdict
 
 
-from random import choice
+from random import choice, uniform
 
 BLACK = 1
 WHITE = 2
@@ -34,7 +34,7 @@ class Bot:
 
     def play_difficulty_1(self, game):
         """Play a move using the minimax algorithm."""
-        _, move = self.minimax(game, 2, True,self.evaluate_f1)
+        _, move = self.minimax(game, 4, True,self.evaluate_f2)
         return move
     
     def play_difficulty_2(self, game):
@@ -108,9 +108,6 @@ class Bot:
                 return -1000
         else:
             return 0
-        
-    # def available_moves(self,game):
-    #     return len(game.board.get_moves(self.player)) - len(game.board.get_moves(self.opponent()))
 
     def almost_bound(self,game):
         result = 0
@@ -131,31 +128,15 @@ class Bot:
                     result += 10
         return result
     
-    def piece_coordination(self,game):
-        result = 0
-        board = game.board
-        for node in board.pieces[self.opponent()]:
-            for edge in board.nodes[board.to_index(node)].edges:
-                for snd_edge in board.nodes[edge].edges:
-                    if board.nodes[snd_edge].piece == self.player:
-                        result += 1
-                if board.nodes[edge].piece == self.player:
-                    result += 3
-        for node in board.pieces[self.player]:
-            for edge in board.nodes[board.to_index(node)].edges:
-                for snd_edge in board.nodes[edge].edges:
-                    if board.nodes[snd_edge].piece == self.opponent():
-                        result -= 1
-                if board.nodes[edge].piece == self.opponent():
-                    result -= 3
-        return result                    
-    
     def evaluate_f1(self,game):
-       return self.game_is_over(game) + self.almost_bound(game) 
+       return self.almost_bound(game) + uniform(0,0.01)
 
     def evaluate_f2(self,game):
-        return self.game_is_over(game) + self.almost_bound(game) + self.piece_coordination(game)
+        return self.game_is_over(game) + uniform(0,0.01)
 
+    def evaluate_f3(self,game):
+        return self.evaluate_f1(game) + self.evaluate_f2(game)
+    
     def opponent(self):
         """Returns the opponent's player color."""
         return BLACK if self.player == WHITE else WHITE
