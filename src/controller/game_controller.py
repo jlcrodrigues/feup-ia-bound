@@ -50,7 +50,7 @@ class GameController:
         if next_move == None: return False
 
         self.game.move(next_move[0], next_move[1])
-
+        
         if (self.game.over):
             print("Game ended, winner: ", str(self.game.winner), " , rounds: " , str(self.rounds))
             return True

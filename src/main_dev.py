@@ -16,7 +16,7 @@ def main_dev():
     for i in range(games):
         print("Game: ", i)
         # create a game controller with two bots
-        game_controller = GameController(Bot(1,0), Bot(2, 0))
+        game_controller = GameController(Bot(1,1), Bot(2,1))
         # play the game
         winner = game_controller.play()
         #keep track of the results
