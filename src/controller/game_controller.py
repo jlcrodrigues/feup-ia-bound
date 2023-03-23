@@ -22,6 +22,7 @@ class GameController:
         self.player_1 = player_1
         self.player_2 = player_2
         self.player = self.player_1
+        self.last_moved = None
 
         self.view = GameView(gui, self.game, [player_1, player_2])
 
@@ -36,7 +37,7 @@ class GameController:
 
     def step(self):
         """Play one round of the game."""
-        self.close = self.view.step()
+        self.close = self.view.step(self.last_moved)
 
         if (self.view.is_restart):
             self.game = Game()
@@ -58,6 +59,7 @@ class GameController:
         if next_move == None: return False
 
         self.game.move(next_move[0], next_move[1])
+        self.last_moved = next_move[0]
 
         if (self.game.over):
             print("Game ended, winner: ", str(self.game.winner), " , rounds: " , str(self.rounds))

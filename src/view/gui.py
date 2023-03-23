@@ -97,12 +97,13 @@ class GUI:
                     else: start_pos = node.pos if node.pos < edge_coords[1] else edge_coords[1]
                     start_angle = angle * (-start_pos - 1) + (angle / 2) * (node.level // 2)
 
-                    rectangle = (center[0] - gap * board.ring_number, center[1] - gap * board.ring_number, gap * board.ring_number * 2, gap * board.ring_number * 2)
+                    rectangle = (center[0] - gap * board.ring_number - 4, center[1] - gap * board.ring_number - 4,
+                                  gap * board.ring_number * 2 + 4, gap * board.ring_number * 2 + 4)
                     pygame.draw.arc(self.win, line_color, rectangle , start_angle - angle, start_angle, LINE_WIDTH)
                         
                 else: pygame.draw.line(self.win, line_color, pos, edge_pos, LINE_WIDTH)
 
-    def draw_pieces(self, board):
+    def draw_pieces(self, board, last_moved: tuple):
         """Display the board, including nodes, pieces and edges."""
         for node in board.nodes:
             pos = self.get_pos(board, (node.level, node.pos))
@@ -110,6 +111,8 @@ class GUI:
             pygame.draw.circle(self.win, EMPTY_COLOR, pos , NODE_RADIUS)
             if not node.is_empty():
                 pygame.draw.circle(self.win, self.get_color(node), pos , PIECE_RADIUS)
+            elif last_moved == (node.level, node.pos):
+                pygame.draw.circle(self.win, EMPTY_COLOR2, pos , NODE_RADIUS)
 
 
     def get_pos(self, board: Board, coords: tuple):

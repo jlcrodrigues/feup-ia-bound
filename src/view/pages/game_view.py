@@ -45,7 +45,7 @@ class GameView(Menu):
         ).translate(0,-10)
 
 
-    def step(self):
+    def step(self, last_moved: tuple):
         if self.gui == None:
             return self.game.over
 
@@ -54,7 +54,7 @@ class GameView(Menu):
         #draw game
         self.gui.draw_background()
         self.gui.draw_grid(self.game.board, self.selected)
-        self.gui.draw_pieces(self.game.board)
+        self.gui.draw_pieces(self.game.board, last_moved)
 
         #draw ui
         self.draw_top_bar()
