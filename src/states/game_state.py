@@ -6,9 +6,9 @@ from view.gui import GUI
 from random import randint
 
 class GameState(State):
-    def __init__(self, gui: GUI, players: list,board_size=1):
+    def __init__(self, gui: GUI, players: list):
         self.gui = gui
-        self.controller = GameController(players[0], players[1], gui,board_size)
+        self.controller = GameController(players[0], players[1], gui)
 
     def step(self):
         self.controller.play()

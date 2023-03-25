@@ -6,7 +6,6 @@ class MenuController:
         self.view = MenuView(gui)
         self.start = False
         self.mode = 1
-        self.board_size = 1
         self.settings = False
 
     def play(self):
@@ -15,7 +14,6 @@ class MenuController:
         if self.view.start:
             self.start = True
             self.mode = self.view.mode
-            self.board_size = self.view.board_size
         elif self.view.settings:
             self.settings = True
         

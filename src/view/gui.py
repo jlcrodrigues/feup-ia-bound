@@ -3,6 +3,7 @@ from math import sin, cos
 
 from model.game import Game
 from model.board import Board
+from model.settings import Settings
 from view.theme import *
 from view.gui_sound import GUISound
 
@@ -20,8 +21,10 @@ class GUI:
         pygame.display.set_icon(icon)
         self.clock = pygame.time.Clock()
 
-        self.sound = GUISound()
 
+        self.settings = Settings()
+        self.sound = GUISound(self.settings)
+        
         self.background = pygame.image.load("../assets/images/background.png")
 
         self.mouse_pos = (-1, -1)

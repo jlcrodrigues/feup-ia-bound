@@ -13,9 +13,8 @@ class MenuState(State):
     def step(self):
         self.controller.play()
         if self.controller.start:
-            board_size = self.controller.board_size
             mode = self.controller.mode
             if mode > 1: return BotMenuState(self.gui, mode)
-            return GameState(self.gui, [None, None],board_size)
+            return GameState(self.gui, [None, None])
         elif self.controller.settings:
             return SettingsMenuState(self.gui)

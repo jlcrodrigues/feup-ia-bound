@@ -6,7 +6,6 @@ class SettingsMenuView(Menu):
     """Renders the settings menu."""
     def __init__(self, gui, text):
         super().__init__(gui)
-        self.gui = gui
         self.start = False
         self.text = text
 
@@ -33,6 +32,7 @@ class SettingsMenuView(Menu):
                             [('Normal', 1),
                                 ('Large', 2),
                                 ('Extra', 3)],
+                            default=self.gui.settings.board_size-1,
                             onchange=self.change_board_size)
         
         self.menu.add.range_slider('Music Volume: ',
@@ -40,7 +40,7 @@ class SettingsMenuView(Menu):
                                       range_text_value_enabled=False,
                                       slider_text_value_enabled=False,
                                       range_text_value_tick_hfactor=0.1,
-                                      default=40,
+                                      default=self.gui.settings.music_volume*100,
                                       onchange=self.change_music_volume)
         
         self.menu.add.range_slider('Sound Effects: ',
@@ -48,10 +48,8 @@ class SettingsMenuView(Menu):
                                       range_text_value_enabled=False,
                                       slider_text_value_enabled=False,
                                       range_text_value_tick_hfactor=0.1,
-                                      default=40,
+                                      default=self.gui.settings.sound_effects_volume*100,
                                       onchange=self.change_effects_volume)
-        
-        self.menu.select_widget(self.menu.get_widgets()[2])
 
     def step(self) -> bool:
         """Calls the menu main loop."""
@@ -60,18 +58,16 @@ class SettingsMenuView(Menu):
     
     def change_board_size(self, _, new_size: int):
         self.play_click()
-        self.board_size = new_size
+        self.gui.settings.board_size = new_size
 
     def change_music_volume(self,new_volume: int):
         self.play_click()
-        self.volume = new_volume
-        self.gui.sound.music_volume = self.volume/100
-        self.gui.sound.music.set_volume(self.volume/100)
+        self.gui.settings.music_volume = new_volume/100
+        self.gui.sound.music.set_volume(new_volume/100)
         
-    def change_effects_volume(self,new_effects_volume: int):
+    def change_effects_volume(self,new_volume: int):
         self.play_click()
-        self.effects = new_effects_volume
-        self.gui.sound.effects_volume = self.effects/100
+        self.gui.settings.sound_effects_volume = new_volume/100
         self.init_sounds()
 
     def close(self):

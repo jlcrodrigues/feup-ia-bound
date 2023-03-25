@@ -10,10 +10,10 @@ class GameController:
     Can be executed without a view, so the bots are easier to test.
     Players can either be a Bot instance or None (for human players).
     """
-    def __init__(self, player_1, player_2,gui=None,board_size=1):
+    def __init__(self, player_1, player_2,gui=None):
         if (gui == None and (player_1 == None or player_2 == None)):
             raise ValueError("If no GUI is provided, both players must be bots.")
-        self.game = Game(board_size)
+        self.game = Game(gui)
         self.players = {}
         self.rounds = 0
         self.close = False
