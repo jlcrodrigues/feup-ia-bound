@@ -31,8 +31,6 @@ class GameController:
         while (not self.close):
             self.step()
         
-        #self.view.step()
-        
         return self.game.winner
 
     def step(self):
@@ -41,9 +39,10 @@ class GameController:
 
         if (self.view.is_restart):
             self.game = Game()
-            self.view.game = self.game
-            self.view.is_restart = False
+            print(self.game)
+            self.view.restart(self.game)
             self.rounds = 0
+            self.last_moved = None
 
         if (self.game.over): return
         if self.step_move():

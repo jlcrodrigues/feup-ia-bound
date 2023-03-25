@@ -24,6 +24,7 @@ class GameView(Menu):
         self.init_modal()
 
     def init_menu(self):
+        """Create menu widgets."""
         self.menu.add.button('').translate(-100, -100) # dummy button to avoid default selection
         self.menu.add.button(
             '<',
@@ -44,10 +45,28 @@ class GameView(Menu):
             selection_color = SELECTED_COLOR
         ).translate(0,-10)
 
+    def init_modal(self):
+        """Creates the pause modal box."""
+        theme = self.theme 
+        theme.widget_font_color = EMPTY_COLOR
+        theme.selection_color = SELECTED_COLOR
+        #theme.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
+        theme.background_color = pygame_menu.BaseImage(
+                image_path="../assets/images/modal.png")
+        self.modal = pygame_menu.Menu('', self.gui.get_width(), self.gui.get_height(),
+                       theme=theme, center_content=True, enabled=False)
+
+        self.modal.add.label('Paused').set_padding(30)
+        self.modal.add.button('resume', lambda : self.disable_modal())
+        self.modal.add.button('restart', lambda : self.enable_restart())
+        self.modal.add.button('menu', lambda : self.close())
+        self.modal.add.button('quit', pygame_menu.events.EXIT)
 
     def step(self, last_moved: tuple):
         if self.gui == None:
             return self.game.over
+
+        self.update_modal()
 
         self.step_sound()
 
@@ -105,7 +124,27 @@ class GameView(Menu):
                     return move
         
         self.selected = None
-            
+
+    def update_modal(self):
+        title = "Paused"
+        if self.game.over:
+            if self.game.winner == 1:
+                title = self.player1_name + ' wins!'
+            elif self.game.winner == 2:
+                title = self.player2_name + ' wins!'
+            else:
+                title =  'Draw!'
+        
+        self.modal.get_widgets()[0].set_title(title)
+        if (self.game.over and not self.played_over_sound): #using sound boolean to open modal once
+            print("here too")
+            self.enable_modal()
+
+    def restart(self, game):
+        """Restart the game."""
+        self.game = game
+        self.is_restart = False 
+        self.played_over_sound = False
     
     def dist(self, coord1: tuple, coord2: tuple):
         """Get the square distance between two points."""
@@ -116,27 +155,10 @@ class GameView(Menu):
         self.gui.sound.toggle_menu()
         self.exit = True
 
-    def restart(self):
-        """Restart the game."""
+    def enable_restart(self):
+        """Called when restart button is clicked. Tells the contorller to restart the game."""
         self.disable_modal()
         self.is_restart = True
-
-    def init_modal(self):
-        """Creates the pause modal box."""
-        theme = self.theme 
-        theme.widget_font_color = EMPTY_COLOR
-        theme.selection_color = SELECTED_COLOR
-        #theme.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
-        theme.background_color = pygame_menu.BaseImage(
-                image_path="../assets/images/modal.png")
-        self.modal = pygame_menu.Menu('', self.gui.get_width(), self.gui.get_height(),
-                       theme=theme, center_content=True, enabled=False)
-
-        self.modal.add.label('Paused').set_padding(30)
-        self.modal.add.button('resume', lambda : self.disable_modal())
-        self.modal.add.button('restart', lambda : self.restart())
-        self.modal.add.button('menu', lambda : self.close())
-        self.modal.add.button('quit', pygame_menu.events.EXIT)
 
     def enable_modal(self):
         """Enable the modal box."""
@@ -155,6 +177,7 @@ class GameView(Menu):
         height = 0.3 * PADDING
 
         player_width = 110
+        if self.game.over: return
         if self.game.player == 1:
             pygame.draw.rect(self.gui.win, SELECTED_COLOR,
                             [0, y, player_width, height], 
@@ -177,3 +200,4 @@ class GameView(Menu):
         self.gui.win.blit(text1, (px, py))
         self.gui.win.blit(text2, (-px + self.gui.get_width() - text2.get_width(),
                                          py))
+        
