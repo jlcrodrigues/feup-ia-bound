@@ -12,8 +12,8 @@ class GUISound:
         self.game_music = pygame.mixer.Sound("../assets/sound/music/game.mp3")
         self.music = self.menu_music
         
-        self.music_volume = 0.5
-        self.effects_volume = 0.5
+        self.music_volume = 0.4
+        self.effects_volume = 0.4
 
         self.play_music()
     

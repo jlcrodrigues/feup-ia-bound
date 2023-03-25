@@ -37,10 +37,11 @@ class Menu:
     def init_sounds(self):
         engine = pygame_menu.sound.Sound()
         engine.set_sound(pygame_menu.sound.SOUND_TYPE_WIDGET_SELECTION, 
-                         '../assets/sound/effects/click.mp3')
+                         '../assets/sound/effects/click.mp3',volume=self.gui.sound.effects_volume)
 
         self.menu.set_sound(engine, recursive=True)  # Apply on menu and all sub-menus
     
     def play_click(self):
         self.sound = pygame.mixer.Sound("../assets/sound/effects/click.mp3")
+        self.sound.set_volume(self.gui.sound.effects_volume)
         self.sound.play()
