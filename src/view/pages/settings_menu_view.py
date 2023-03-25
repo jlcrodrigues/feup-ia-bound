@@ -50,6 +50,13 @@ class SettingsMenuView(Menu):
                                       range_text_value_tick_hfactor=0.1,
                                       default=self.gui.settings.sound_effects_volume*100,
                                       onchange=self.change_effects_volume)
+        
+        self.menu.add.selector('Bot Speed: ',
+                            [('Fast', 1),
+                                ('Normal', 2),
+                                ('Slow', 3)],
+                            default=self.gui.settings.bot_delay-1,
+                            onchange=self.change_bot_delay)
 
     def step(self) -> bool:
         """Calls the menu main loop."""
@@ -69,6 +76,10 @@ class SettingsMenuView(Menu):
         self.play_click()
         self.gui.settings.sound_effects_volume = new_volume/100
         self.init_sounds()
+        
+    def change_bot_delay(self, _, new_delay: int):
+        self.play_click()
+        self.gui.settings.bot_delay = new_delay
 
     def close(self):
         self.menu.disable()

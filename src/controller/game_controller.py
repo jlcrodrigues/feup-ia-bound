@@ -17,6 +17,7 @@ class GameController:
         self.players = {}
         self.rounds = 0
         self.close = False
+        self.gui = gui
 
         self.player_1 = player_1
         self.player_2 = player_2
@@ -46,6 +47,7 @@ class GameController:
             next_move = self.get_user_input()
         else:
             next_move = self.player.get_move(self.game)
+            sleep(self.gui.settings.bot_delay_in_sec())
 
         if next_move == None: return False
 
