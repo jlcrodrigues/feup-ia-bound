@@ -1,9 +1,9 @@
 import pygame_menu
 from view.theme import *
 from view.pages.menu import Menu
+from model.bot import Bot, BOTS
 
 TEXT_PATH = '../assets/text/bot/'
-MAX_DIFFICULTY = 2
 
 class BotMenuView(Menu):
     """Renders the difficulty selection menu."""
@@ -13,7 +13,7 @@ class BotMenuView(Menu):
         self.start = False
         self.text = text
 
-        self.selection = (0, 0) # (bot, diffculty)
+        self.selection = next(iter(BOTS)) #first
 
         self.descriptions = []
         self.load_texts()
@@ -36,9 +36,7 @@ class BotMenuView(Menu):
             font_size=40)
 
         self.menu.add.selector('',
-            [('Tiago', 0),
-              ('Martim', 1),
-              ('Luis', 2)],
+              [(b, b) for b in BOTS],
                 onchange = self.change_bot,)
         self.menu.add.label(
             self.descriptions[0],
@@ -50,7 +48,7 @@ class BotMenuView(Menu):
 
     def load_texts(self):
         """Load bot descriptions from files."""
-        for i in range(0, MAX_DIFFICULTY + 1):
+        for i in range(0, len(BOTS)):
             with open(TEXT_PATH + str(i) + '.txt', 'r') as file:
                 self.descriptions.append(file.read())
 
@@ -59,9 +57,9 @@ class BotMenuView(Menu):
         self.menu.mainloop(self.gui.win)
         return self.start
 
-    def change_bot(self, _, new_bot: int):
-        self.menu.get_widgets()[3].set_title(self.descriptions[new_bot])
-        self.selection = (new_bot, 0)
+    def change_bot(self, _, new_bot: str):
+        self.menu.get_widgets()[3].set_title(self.descriptions[BOTS[new_bot]])
+        self.selection = new_bot
         self.play_click()
 
     def start_game(self):

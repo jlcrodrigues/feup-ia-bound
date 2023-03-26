@@ -3,19 +3,28 @@ import math
 import numpy as np
 from collections import defaultdict
 
+from model.player import *
 
 from random import choice, uniform
 
-BLACK = 1
-WHITE = 2
+BOTS = {
+    "Tiago": 0,
+    "Martim": 1,
+    "Luís": 2
+}
 
-class Bot:
+class Bot(Player):
     """
     Defines a bot player. The bot can be of different difficulty levels.
     """
 
-    def __init__(self, player, difficulty):
-        self.player = player
+    def __init__(self, player: int, bot_name : str):
+        super().__init__(player)
+        self.is_bot = True
+        self.name = bot_name
+
+        difficulty = BOTS[bot_name]
+
         if (difficulty > 2): raise ValueError(f"That bot difficulty does not exist: {difficulty}")
         if difficulty == 0:
             self.get_move = self.play_random
