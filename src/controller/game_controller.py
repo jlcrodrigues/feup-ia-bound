@@ -39,7 +39,6 @@ class GameController:
 
         if (self.view.is_restart):
             self.game = Game()
-            print(self.game)
             self.view.restart(self.game)
             self.rounds = 0
             self.last_moved = None

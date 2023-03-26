@@ -26,6 +26,12 @@ class GUI:
 
         self.background = pygame.image.load("../assets/images/background.png")
 
+        self.black_img = pygame.image.load("../assets/images/black.png")
+        self.white_img = pygame.image.load("../assets/images/white.png")
+
+        self.black_img = pygame.transform.scale(self.black_img, (36, 36))
+        self.white_img = pygame.transform.scale(self.white_img, (36, 36))
+
         self.mouse_pos = (-1, -1)
         self.mouse_pressed = (False, False, False)
 
@@ -110,7 +116,12 @@ class GUI:
 
             pygame.draw.circle(self.win, EMPTY_COLOR, pos , NODE_RADIUS)
             if not node.is_empty():
-                pygame.draw.circle(self.win, self.get_color(node), pos , PIECE_RADIUS)
+                if node.piece == 1:
+                #pygame.draw.circle(self.win, self.get_color(node), pos , PIECE_RADIUS)
+                    self.win.blit(self.black_img, (pos[0] - 16, pos[1] - 16))
+                else: 
+                    self.win.blit(self.white_img, (pos[0] - 16, pos[1] - 16))
+
             elif last_moved == (node.level, node.pos):
                 pygame.draw.circle(self.win, EMPTY_COLOR2, pos , NODE_RADIUS)
 

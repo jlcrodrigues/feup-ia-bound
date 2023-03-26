@@ -107,10 +107,12 @@ class GameView(Menu):
 
         mouse_pos =  self.gui.mouse_pos
 
+        tolerance = 10
+
         # select a piece
         for piece in pieces:
             piece_pos = self.gui.get_pos(self.game.board, piece)
-            if self.dist(piece_pos, mouse_pos) < PIECE_RADIUS ** 2:
+            if self.dist(piece_pos, mouse_pos) < (PIECE_RADIUS + tolerance) ** 2:
                 self.selected = piece
                 return None
 
@@ -118,7 +120,7 @@ class GameView(Menu):
         if self.selected != None:
             for edge in self.game.board.get_piece_moves(self.selected):
                 edge_pos = self.gui.get_pos(self.game.board, edge)
-                if self.dist(edge_pos, mouse_pos) < PIECE_RADIUS ** 2:
+                if self.dist(edge_pos, mouse_pos) < (PIECE_RADIUS + tolerance) ** 2:
                     move =  (self.selected, edge)
                     self.selected = None
                     return move
@@ -137,7 +139,6 @@ class GameView(Menu):
         
         self.modal.get_widgets()[0].set_title(title)
         if (self.game.over and not self.played_over_sound): #using sound boolean to open modal once
-            print("here too")
             self.enable_modal()
 
     def restart(self, game):
