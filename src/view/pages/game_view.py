@@ -2,29 +2,29 @@ from view.pages.menu import Menu
 from view.gui import GUI
 from view.theme import *
 import pygame_menu
+import pygame
 
 class GameView(Menu):
     """Renders the game page."""
-    def __init__(self, gui, game):
+    def __init__(self, gui, game, players: list):
         super().__init__(gui, False)
         self.game = game
         self.selected = None
         self.exit = False
+        self.is_restart = False
 
         self.last_player = 1
         self.played_over_sound = False
         self.playing_color = PLAYER_1_COLOR
+        self.player1_name = players[0].name
+        self.player2_name = players[1].name
 
         if self.gui == None: return
         self.init_menu()
+        self.init_modal()
 
     def init_menu(self):
-        self.menu.add.label(
-            'bound',
-            font_name=FONT_PATH,
-            float=True,
-            font_color=EMPTY_COLOR,
-        )
+        """Create menu widgets."""
         self.menu.add.button('').translate(-100, -100) # dummy button to avoid default selection
         self.menu.add.button(
             '<',
@@ -33,27 +33,56 @@ class GameView(Menu):
             float=True,
             font_color = EMPTY_COLOR,
             selection_color = SELECTED_COLOR
-        )
+        ).translate(0,-3)
+        self.menu.add.label('bound', align=pygame_menu.locals.ALIGN_CENTER, float=True).translate(0,-3)
+        self.menu.add.button(
+            '...',
+            lambda : self.enable_modal(),
+            align=pygame_menu.locals.ALIGN_RIGHT,
+            float=True,
+            font_color = EMPTY_COLOR,
+            font_size=100,
+            selection_color = SELECTED_COLOR
+        ).translate(0,-10)
 
+    def init_modal(self):
+        """Creates the pause modal box."""
+        theme = self.theme 
+        theme.widget_font_color = EMPTY_COLOR
+        theme.selection_color = SELECTED_COLOR
+        #theme.widget_selection_effect = pygame_menu.widgets.HighlightSelection()
+        theme.background_color = pygame_menu.BaseImage(
+                image_path="../assets/images/modal.png")
+        self.modal = pygame_menu.Menu('', self.gui.get_width(), self.gui.get_height(),
+                       theme=theme, center_content=True, enabled=False)
 
-    def step(self):
+        self.modal.add.label('Paused').set_padding(30)
+        self.modal.add.button('resume', lambda : self.disable_modal())
+        self.modal.add.button('restart', lambda : self.enable_restart())
+        self.modal.add.button('menu', lambda : self.close())
+        self.modal.add.button('quit', pygame_menu.events.EXIT)
+
+    def step(self, last_moved: tuple):
         if self.gui == None:
             return self.game.over
 
+        self.update_modal()
+
         self.step_sound()
 
-        self.playing_color = PLAYER_1_COLOR if self.game.player == 1 else PLAYER_2_COLOR
-        self.menu.get_widgets()[0].update({'font_color': self.playing_color})
-
+        #draw game
         self.gui.draw_background()
         self.gui.draw_grid(self.game.board, self.selected)
-        self.gui.draw_pieces(self.game.board)
-        self.draw_bottom_text()
+        self.gui.draw_pieces(self.game.board, last_moved)
+
+        #draw ui
+        self.draw_top_bar()
+        self.draw_player_info()
+        self.gui.draw_menu(self.modal)
         self.gui.draw_menu(self.menu)        
 
         self.gui.update()
-
-        self.gui.handle_events()
+        if not self.gui.handle_events(): self.exit = True
 
         return self.exit
 
@@ -70,6 +99,7 @@ class GameView(Menu):
         """Read the mouse state and determine if the player has made a move.
         The also view keeps the state of the selected piece in order to render possible moves.
         """
+        if self.modal.is_enabled(): return None 
         player = self.game.player
         pieces = self.game.board.pieces[player]
 
@@ -77,10 +107,12 @@ class GameView(Menu):
 
         mouse_pos =  self.gui.mouse_pos
 
+        tolerance = 10
+
         # select a piece
         for piece in pieces:
             piece_pos = self.gui.get_pos(self.game.board, piece)
-            if self.dist(piece_pos, mouse_pos) < PIECE_RADIUS ** 2:
+            if self.dist(piece_pos, mouse_pos) < (PIECE_RADIUS + tolerance) ** 2:
                 self.selected = piece
                 return None
 
@@ -88,13 +120,34 @@ class GameView(Menu):
         if self.selected != None:
             for edge in self.game.board.get_piece_moves(self.selected):
                 edge_pos = self.gui.get_pos(self.game.board, edge)
-                if self.dist(edge_pos, mouse_pos) < PIECE_RADIUS ** 2:
+                if self.dist(edge_pos, mouse_pos) < (PIECE_RADIUS + tolerance) ** 2:
                     move =  (self.selected, edge)
                     self.selected = None
                     return move
         
         self.selected = None
-            
+
+    def update_modal(self):
+        title = "Paused"
+        if self.game.over:
+            if self.game.winner == 1:
+                title = self.player1_name + ' wins!'
+            elif self.game.winner == 2:
+                title = self.player2_name + ' wins!'
+            else:
+                title =  'Draw!'
+        
+        self.modal.get_widgets()[0].set_title(title)
+        if (self.game.over and not self.played_over_sound): #using sound boolean to open modal once
+            self.gui.mouse_pressed = (False, False, False)
+            self.enable_modal()
+
+    def restart(self, game):
+        """Restart the game."""
+        self.game = game
+        self.last_player = 1
+        self.is_restart = False 
+        self.played_over_sound = False
     
     def dist(self, coord1: tuple, coord2: tuple):
         """Get the square distance between two points."""
@@ -105,13 +158,47 @@ class GameView(Menu):
         self.gui.sound.toggle_menu()
         self.exit = True
 
-    def draw_bottom_text(self):
-        """Draws the text at the bottom of the screen depending on game state."""
-        words = 'black to move' if self.game.player == 1 else 'white to move'
-        if (self.game.over):
-            words = 'black wins' if self.game.player == 1 else 'white wins'
+    def enable_restart(self):
+        """Called when restart button is clicked. Tells the contorller to restart the game."""
+        self.disable_modal()
+        self.is_restart = True
 
-        text = self.gui.font_small.render(words, True, self.playing_color)
-        self.gui.win.blit(text, (self.gui.get_width() / 2 - text.get_width() / 2,
-                                         self.gui.get_height() - text.get_height()))
+    def enable_modal(self):
+        """Enable the modal box."""
+        self.modal.enable()
+        #self.menu.disable()
 
+    def disable_modal(self):
+        """Disable the modal box."""
+        self.modal.disable()
+        #self.menu.enable()
+        self.menu.get_widgets()[0].select(update_menu=True)
+    
+    def draw_top_bar(self):
+        """Draw the top nav bar."""
+        height = 0.3 * PADDING
+        y = self.gui.get_height() - 0.3 * PADDING
+
+        player_width = 110
+        if self.game.over: return
+        pygame.draw.rect(self.gui.win, SELECTED_COLOR if self.game.player == 1 else BACKGROUND_COLOR,
+                        [0, y, player_width, height], 
+                        border_bottom_right_radius=5, border_top_right_radius=5)
+
+        pygame.draw.rect(self.gui.win, SELECTED_COLOR if self.game.player == 2 else BACKGROUND_COLOR,
+                        [self.gui.get_width() - player_width, y, player_width, height],
+                            border_bottom_left_radius=5, border_top_left_radius=5)
+
+    def draw_player_info(self):
+        """Draws the current player info."""
+        px = 0.1 * PADDING
+        py = self.gui.get_height() - 0.25 * PADDING 
+
+        text1 = self.gui.font_small.render(self.player1_name, True, PLAYER_1_COLOR)
+
+        text2 = self.gui.font_small.render(self.player2_name, True, PLAYER_2_COLOR)
+
+        self.gui.win.blit(text1, (px, py))
+        self.gui.win.blit(text2, (-px + self.gui.get_width() - text2.get_width(),
+                                         py))
+        
