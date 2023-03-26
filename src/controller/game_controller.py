@@ -48,15 +48,14 @@ class GameController:
 
         if (self.game.over): return
         if self.step_move():
-            print("Round: ", self.rounds)
             self.rounds += 1
 
     def step_move(self):
         """Execute a move given by the current player."""
         if self.player.is_bot: 
-            next_move = self.player.get_move(self.game)
             delay = 0 if self.gui == None else self.gui.settings.bot_delay_in_sec()
             sleep(delay)
+            next_move = self.player.get_move(self.game)
         else:
             next_move = self.get_user_input()
 

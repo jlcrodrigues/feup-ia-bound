@@ -10,8 +10,8 @@ from random import choice, uniform
 
 BOTS = {
     "Tiago": 0,
-    "Martim": 1,
-    "Luís": 2
+    "Luís": 1,
+    "Martim": 2
 }
 
 class Bot(Player):
