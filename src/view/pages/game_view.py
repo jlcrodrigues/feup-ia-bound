@@ -139,11 +139,13 @@ class GameView(Menu):
         
         self.modal.get_widgets()[0].set_title(title)
         if (self.game.over and not self.played_over_sound): #using sound boolean to open modal once
+            self.gui.mouse_pressed = (False, False, False)
             self.enable_modal()
 
     def restart(self, game):
         """Restart the game."""
         self.game = game
+        self.last_player = 1
         self.is_restart = False 
         self.played_over_sound = False
     

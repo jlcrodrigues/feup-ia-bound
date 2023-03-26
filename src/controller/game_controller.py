@@ -42,6 +42,8 @@ class GameController:
             self.view.restart(self.game)
             self.rounds = 0
             self.last_moved = None
+            self.player = self.player_1
+            return
 
         if (self.game.over): return
         if self.step_move():
