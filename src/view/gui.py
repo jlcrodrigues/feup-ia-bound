@@ -23,9 +23,6 @@ class GUI:
 
         self.closed = False
 
-        self.closed = False
-
-
         self.settings = Settings()
         self.sound = GUISound(self.settings)
         

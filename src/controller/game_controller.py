@@ -2,6 +2,7 @@ from model.game import Game
 from model.bot import Bot
 from model.player import Player
 from view.pages.game_view import GameView
+from time import sleep
 
 class GameController:
     """
@@ -37,7 +38,7 @@ class GameController:
         self.close = self.view.step(self.last_moved)
 
         if (self.view.is_restart):
-            self.game = Game()
+            self.game = Game(self.gui)
             self.view.restart(self.game)
             self.rounds = 0
             self.last_moved = None
