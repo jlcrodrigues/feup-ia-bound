@@ -10,10 +10,11 @@ class GameController:
     Can be executed without a view, so the bots are easier to test.
     Players can either be a Bot instance or None (for human players).
     """
-    def __init__(self, player_1: Player, player_2: Player, gui=None):
+    def __init__(self, player_1: Player, player_2: Player, gui=None, board=1):
         if (gui == None and (player_1 == None or player_2 == None)):
             raise ValueError("If no GUI is provided, both players must be bots.")
-        self.game = Game(gui)
+        board_size = board if gui == None else gui.settings.board_size
+        self.game = Game(board_size)
         self.players = {}
         self.rounds = 0
         self.close = False
@@ -38,7 +39,7 @@ class GameController:
         self.close = self.view.step(self.last_moved)
 
         if (self.view.is_restart):
-            self.game = Game(self.gui)
+            self.game = Game(self.gui.settings.board_size)
             self.view.restart(self.game)
             self.rounds = 0
             self.last_moved = None
@@ -47,13 +48,15 @@ class GameController:
 
         if (self.game.over): return
         if self.step_move():
+            print("Round: ", self.rounds)
             self.rounds += 1
 
     def step_move(self):
         """Execute a move given by the current player."""
         if self.player.is_bot: 
             next_move = self.player.get_move(self.game)
-            sleep(self.gui.settings.bot_delay_in_sec())
+            delay = 0 if self.gui == None else self.gui.settings.bot_delay_in_sec()
+            sleep(delay)
         else:
             next_move = self.get_user_input()
 

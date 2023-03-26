@@ -57,6 +57,8 @@ class SettingsMenuView(Menu):
                                 ('Slow', 3)],
                             default=self.gui.settings.bot_delay-1,
                             onchange=self.change_bot_delay)
+        
+        self.menu.select_widget(self.menu.get_widgets()[2])
 
     def step(self) -> bool:
         """Calls the menu main loop."""
