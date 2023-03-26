@@ -140,7 +140,7 @@ class GUI:
         return (int(x), int(y))
 
     def get_board_center(self) -> (int):
-        return (self.win.get_width() / 2, self.win.get_height() / 2 + 0.3 * PADDING)
+        return (self.win.get_width() / 2, self.win.get_height() / 2 -0* 0.3 * PADDING)
 
     def get_color(self, node):
         """Get the current color of a node."""

@@ -176,25 +176,23 @@ class GameView(Menu):
     
     def draw_top_bar(self):
         """Draw the top nav bar."""
-        y = 0.65 * PADDING
         height = 0.3 * PADDING
+        y = self.gui.get_height() - 0.3 * PADDING
 
         player_width = 110
         if self.game.over: return
-        if self.game.player == 1:
-            pygame.draw.rect(self.gui.win, SELECTED_COLOR,
-                            [0, y, player_width, height], 
-                            border_bottom_right_radius=5, border_top_right_radius=5)
+        pygame.draw.rect(self.gui.win, SELECTED_COLOR if self.game.player == 1 else BACKGROUND_COLOR,
+                        [0, y, player_width, height], 
+                        border_bottom_right_radius=5, border_top_right_radius=5)
 
-        if self.game.player == 2:
-            pygame.draw.rect(self.gui.win, SELECTED_COLOR,
-                            [self.gui.get_width() - player_width, y, player_width, height],
-                              border_bottom_left_radius=5, border_top_left_radius=5)
+        pygame.draw.rect(self.gui.win, SELECTED_COLOR if self.game.player == 2 else BACKGROUND_COLOR,
+                        [self.gui.get_width() - player_width, y, player_width, height],
+                            border_bottom_left_radius=5, border_top_left_radius=5)
 
     def draw_player_info(self):
         """Draws the current player info."""
         px = 0.1 * PADDING
-        py = 0.7 * PADDING 
+        py = self.gui.get_height() - 0.25 * PADDING 
 
         text1 = self.gui.font_small.render(self.player1_name, True, PLAYER_1_COLOR)
 

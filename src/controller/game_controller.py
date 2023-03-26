@@ -3,8 +3,6 @@ from model.bot import Bot
 from model.player import Player
 from view.pages.game_view import GameView
 
-from time import sleep
-
 class GameController:
     """
     Controls the game flow. Connects view to the model.
