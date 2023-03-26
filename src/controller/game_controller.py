@@ -54,7 +54,7 @@ class GameController:
         """Execute a move given by the current player."""
         if self.player.is_bot: 
             delay = 0 if self.gui == None else self.gui.settings.bot_delay_in_sec()
-            sleep(delay)
+            #sleep(delay)
             next_move = self.player.get_move(self.game)
         else:
             next_move = self.get_user_input()
