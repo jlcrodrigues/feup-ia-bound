@@ -41,15 +41,15 @@ class Bot(Player):
     def play_random(self, game):
         """Play a random move."""
         return choice(game.board.get_moves(self.player))
-
-    def play_difficulty_1(self, game):
-        """Play a move using the minimax algorithm."""
-        _, move = self.minimax(game,self.bot_settings.minimax_depth,True,self.get_evaluate_func())
-        return move
     
-    def play_difficulty_2(self, game):
+    def play_difficulty_1(self, game):
         """Play a move using the montecarlo algorithm."""
         move = self.monte_carlo(game,self)
+        return move
+
+    def play_difficulty_2(self, game):
+        """Play a move using the minimax algorithm."""
+        _, move = self.minimax(game,self.bot_settings.minimax_depth,True,self.get_evaluate_func())
         return move
 
     def get_evaluate_func(self):
