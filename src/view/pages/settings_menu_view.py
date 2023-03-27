@@ -57,6 +57,12 @@ class SettingsMenuView(Menu):
                                 ('Slow', 3)],
                             default=self.gui.settings.bot_delay-1,
                             onchange=self.change_bot_delay)
+
+        self.menu.add.selector('Skin: ',
+                            [('Default', 'default'),
+                                ('Tiago', 'tiago'),],
+                            onchange=self.change_skin
+                            )
         
         self.menu.select_widget(self.menu.get_widgets()[2])
 
@@ -82,6 +88,9 @@ class SettingsMenuView(Menu):
     def change_bot_delay(self, _, new_delay: int):
         self.play_click()
         self.gui.settings.bot_delay = new_delay
+
+    def change_skin(self, _, new_skin: str):
+        self.gui.set_skin(new_skin)
 
     def close(self):
         self.menu.disable()

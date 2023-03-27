@@ -29,13 +29,7 @@ class GUI:
         
         self.background = pygame.image.load("../assets/images/background.png")
 
-        skin = "default"
-        self.black_img = pygame.image.load("../assets/images/skins/" + skin + "/black.png")
-        self.white_img = pygame.image.load("../assets/images/skins/" + skin + "/white.png")
-
-        piece_size = 32
-        self.black_img = pygame.transform.scale(self.black_img, (piece_size, piece_size))
-        self.white_img = pygame.transform.scale(self.white_img, (piece_size, piece_size))
+        self.set_skin("default")
 
         self.mouse_pos = (-1, -1)
         self.mouse_pressed = (False, False, False)
@@ -174,3 +168,6 @@ class GUI:
         self.black_img = pygame.image.load("../assets/images/skins/" + skin + "/black.png")
         self.white_img = pygame.image.load("../assets/images/skins/" + skin + "/white.png")
 
+        piece_size = 32
+        self.black_img = pygame.transform.scale(self.black_img, (piece_size, piece_size))
+        self.white_img = pygame.transform.scale(self.white_img, (piece_size, piece_size))
