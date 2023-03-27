@@ -1,1 +1,1 @@
-Luís is a strategist who uses MCTS.
+Meet Luis, the strategist. He uses the Monte Carlo Tree Search algorithm to analyze every move and find the optimal strategy. 

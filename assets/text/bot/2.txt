@@ -1,1 +1,1 @@
-Martim is a perfectionist who uses Minimax.
+Introducing Martim, the perfectionist. He uses the Minimax algorithm to explore all possible outcomes and select the move that minimizes his opponent's chances of winning.
