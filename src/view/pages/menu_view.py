@@ -8,6 +8,7 @@ class MenuView(Menu):
         super().__init__(gui)
         self.mode = 1
         self.start = False
+        self.settings = False
 
         self.init_menu()
         self.menu.center_content()
@@ -24,13 +25,17 @@ class MenuView(Menu):
               ('Player vs Cpu', 2),
               ('CPU vs Cpu', 3)],
                 onchange = self.change_mode)
+        
         self.menu.add.button('play', self.start_game)
+        
+        self.menu.add.button('settings', self.start_settings)
+        
         self.menu.add.button('quit', pygame_menu.events.EXIT)
 
     def step(self) -> bool:
         """Calls the menu main loop."""
         self.menu.mainloop(self.gui.win)
-        return self.start
+        return self.start or self.settings
 
     def change_mode(self, _, new_mode: int):
         self.play_click()
@@ -41,3 +46,7 @@ class MenuView(Menu):
         if self.mode == 1:
             self.gui.sound.toggle_game()
         self.start = True
+        
+    def start_settings(self):
+        self.menu.disable()
+        self.settings = True

@@ -21,14 +21,28 @@ class BotMenuController:
         if not self.view.step(): return False
         selection = self.view.selection
         pos = 0 if self.mode > 2 else randint(0, 1)
-        self.players[pos] = Bot(pos + 1, selection)
+        bot1 = Bot(pos + 1, selection)
+        if selection == "Martim":
+            bot1.bot_settings.minimax_depth = self.view.minimax_depth
+            bot1.bot_settings.minimax_evaluate = self.view.minimax_evaluate
+        elif selection == "Luís":
+            bot1.bot_settings.montecarlo_exploration = self.view.montecarlo_exploration
+            bot1.bot_settings.montecarlo_simulations = self.view.montecarlo_simulations
+        self.players[pos] = bot1
 
         if self.mode > 2:
             self.view = BotMenuView(self.gui, "Choose the second CPU")
             if not self.view.step():
                 return False
             selection = self.view.selection
-            self.players[1] = Bot(2, selection)
+            bot2 = Bot(2, selection)
+            if selection == "Martim":
+                bot2.bot_settings.minimax_depth = self.view.minimax_depth
+                bot2.bot_settings.minimax_evaluate = self.view.minimax_evaluate
+            elif selection == "Luís":
+                bot2.bot_settings.montecarlo_exploration = self.view.montecarlo_exploration
+                bot2.bot_settings.montecarlo_simulations = self.view.montecarlo_simulations
+            self.players[1] = bot2
 
         return True
 

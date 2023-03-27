@@ -2,6 +2,7 @@ from model.game import Game
 from model.bot import Bot
 from model.player import Player
 from view.pages.game_view import GameView
+from time import sleep,time
 
 class GameController:
     """
@@ -9,13 +10,15 @@ class GameController:
     Can be executed without a view, so the bots are easier to test.
     Players can either be a Bot instance or None (for human players).
     """
-    def __init__(self, player_1: Player, player_2: Player, gui=None):
+    def __init__(self, player_1: Player, player_2: Player, gui=None, board=1):
         if (gui == None and (player_1 == None or player_2 == None)):
             raise ValueError("If no GUI is provided, both players must be bots.")
-        self.game = Game()
+        board_size = board if gui == None else gui.settings.board_size
+        self.game = Game(board_size)
         self.players = {}
         self.rounds = 0
         self.close = False
+        self.gui = gui
 
         self.player_1 = player_1
         self.player_2 = player_2
@@ -23,6 +26,11 @@ class GameController:
         self.last_moved = None
 
         self.view = GameView(gui, self.game, [player_1, player_2])
+        
+        self.average_time_player_1 = 0
+        self.player_1_count = 0
+        self.average_time_player_2 = 0
+        self.player_2_count = 0
 
     def play(self):
         """Play out a full game."""
@@ -36,7 +44,7 @@ class GameController:
         self.close = self.view.step(self.last_moved)
 
         if (self.view.is_restart):
-            self.game = Game()
+            self.game = Game(self.gui.settings.board_size)
             self.view.restart(self.game)
             self.rounds = 0
             self.last_moved = None
@@ -50,7 +58,21 @@ class GameController:
     def step_move(self):
         """Execute a move given by the current player."""
         if self.player.is_bot: 
+            delay = 0 if self.gui == None else self.gui.settings.bot_delay_in_sec()
+            start_time = time()
             next_move = self.player.get_move(self.game)
+            end_time = time()  # get time after function completes
+            elapsed_time = end_time - start_time  # calculate elapsed time
+            
+            if self.player == self.player_1:
+                self.player_1_count += 1  # increment count
+                self.average_time_player_1 = ((self.player_1_count - 1) * self.average_time_player_1 + elapsed_time) / self.player_1_count  # calculate running average
+            elif self.player == self.player_2:
+                self.player_2_count += 1  # increment count
+                self.average_time_player_2 = ((self.player_2_count - 1) * self.average_time_player_2 + elapsed_time) / self.player_2_count  # calculate running average
+
+            if elapsed_time < delay:
+                sleep(delay - elapsed_time)  # wait for remaining time
         else:
             next_move = self.get_user_input()
 
@@ -61,6 +83,8 @@ class GameController:
 
         if (self.game.over):
             print("Game ended, winner: ", str(self.game.winner), " , rounds: " , str(self.rounds))
+            print("Average time player 1: ", self.average_time_player_1)
+            print("Average time player 2: ", self.average_time_player_2)
             return True
 
         self.next_player()

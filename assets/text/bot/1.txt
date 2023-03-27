@@ -1,1 +1,1 @@
-This is minimax
+Luís is a strategist who uses MCTS.

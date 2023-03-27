@@ -4,13 +4,14 @@ import numpy as np
 from collections import defaultdict
 
 from model.player import *
+from model.bot_settings import BotSettings
 
 from random import choice, uniform
 
 BOTS = {
     "Tiago": 0,
-    "Martim": 1,
-    "Luís": 2
+    "Luís": 1,
+    "Martim": 2
 }
 
 class Bot(Player):
@@ -22,7 +23,7 @@ class Bot(Player):
         super().__init__(player)
         self.is_bot = True
         self.name = bot_name
-
+        self.bot_settings = BotSettings()
         difficulty = BOTS[bot_name]
 
         if (difficulty > 2): raise ValueError(f"That bot difficulty does not exist: {difficulty}")
@@ -40,70 +41,59 @@ class Bot(Player):
     def play_random(self, game):
         """Play a random move."""
         return choice(game.board.get_moves(self.player))
-
-    def play_difficulty_1(self, game):
-        """Play a move using the minimax algorithm."""
-        _, move = self.minimax(game, 4, True,self.evaluate_f2)
-        return move
     
-    def play_difficulty_2(self, game):
+    def play_difficulty_1(self, game):
         """Play a move using the montecarlo algorithm."""
         move = self.monte_carlo(game,self)
         return move
 
+    def play_difficulty_2(self, game):
+        """Play a move using the minimax algorithm."""
+        _, move = self.minimax(game,self.bot_settings.minimax_depth,True,self.get_evaluate_func())
+        return move
+
+    def get_evaluate_func(self):
+        if self.bot_settings.minimax_evaluate == 1:
+            return self.evaluate_f1
+        elif self.bot_settings.minimax_evaluate == 2:
+            return self.evaluate_f2
+        elif self.bot_settings.minimax_evaluate == 3:
+            return self.evaluate_f3
     
     def minimax(self, game, depth, maximizing_player,evaluate_func,alpha=float('-inf'), beta=float('inf')):
         """Minimax algorithm with alpha-beta pruning."""
         if depth == 0 or game.over:
-            # if game.over and depth > 0:
-            #     print(f"game over depth: {depth}")
             return evaluate_func(game), None
 
         if maximizing_player:
             value = float('-inf')
             best_move = None
-            # best_moves = []
             for move in game.board.get_moves(self.player):
-                #print("maximizing")
                 copy_game = copy.deepcopy(game)
-                #print(f"player: {copy_game.player}, move: {move}")
                 copy_game.move(move[0],move[1])
                 new_value, _ = self.minimax(copy_game, depth - 1, False,evaluate_func,alpha,beta)
-                # if new_value == value:
-                #     best_moves.append((move,new_value))
                 if new_value > value:
                     value = new_value
                     best_move = move 
                 alpha = max(alpha, value)
                 if beta <= alpha:
                     break  # beta cutoff
-            # if depth == 6:
-            #     print(f"max all moves: {game.board.get_moves(self.player)} \nlength: {len(game.board.get_moves(self.player))}")
-            #     print(f"max best moves: {best_moves} \nlength: {len(best_moves)}")
             if best_move == None:
                 best_move = choice(game.board.get_moves(self.player)) #random move            
             return value, best_move
         else:
             value = float('inf')
             best_move = None
-            # best_moves = []
             for move in game.board.get_moves(self.opponent()):
-                #print("minimizing")
                 copy_game = copy.deepcopy(game)
-                #print(f"player: {copy_game.player}, move: {move}")
                 copy_game.move(move[0],move[1])
                 new_value, _ = self.minimax(copy_game, depth - 1, True,evaluate_func,alpha,beta)
-                # if new_value == value:
-                #     best_moves.append((move,new_value))
                 if new_value < value:
                     value = new_value
                     best_move = move
                 beta = min(beta, value)
                 if beta <= alpha:
-                    break  # alpha cutoff
-            # if depth == 6:
-                # print(f"min all moves2: {game.board.get_moves(self.opponent())} \nlength: {len(game.board.get_moves(self.opponent()))}")
-                # print(f"min best moves2: {best_moves} \nlength: {len(best_moves)}")           
+                    break  # alpha cutoff         
             if best_move == None:
                 best_move = choice(game.board.get_moves(self.player)) #random move
             return value, best_move
@@ -153,7 +143,6 @@ class Bot(Player):
 
     def monte_carlo(self, game, bot):
         """Play a move using Monte Carlo Tree Search."""
-        #print("monte carlo")
         root = TreeNode(game, None, None, bot)
         return root.best_move()
     
@@ -216,7 +205,7 @@ class TreeNode:
         """Return True if the node has been fully expanded."""
         return len(self.untried_moves) == 0
     
-    def best_child(self, c_param=2):
+    def best_child(self, c_param):
         """Return the child with the highest UCB score."""
         choices_weights = [(c.q() / (c.n())) + c_param * np.sqrt(np.log(self.n()) / (c.n())) for c in self.children]
         return self.children[np.argmax(choices_weights)]
@@ -228,7 +217,7 @@ class TreeNode:
             if not current.is_full_expanded():
                 return current.expand()
             else:
-                current = current.best_child()
+                current = current.best_child(self.bot.bot_settings.montecarlo_exploration)
         return current
     
     def _tree_to_string(self, indent):
@@ -245,15 +234,11 @@ class TreeNode:
     
     def best_move(self):
         """Return the best move"""
-        simulation_no = 10000
+        simulation_no = self.bot.bot_settings.montecarlo_simulations
         
         for i in range(simulation_no):
             leaf = self._tree_policy()
             winner = leaf.rollout()
             leaf.backpropagate(winner)
-            
-        #print(self._tree_to_string(0))
-        
-        #print("Best move: ", self.best_child().move)
 
-        return self.best_child().move
+        return self.best_child(self.bot.bot_settings.montecarlo_exploration).move
