@@ -15,7 +15,7 @@ class GUI:
     def __init__(self):
         pygame.init()
 
-        self.win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
+        self.win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Bound")
         icon = pygame.image.load("../assets/images/icon.png")
         pygame.display.set_icon(icon)
