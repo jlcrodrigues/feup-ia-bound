@@ -62,6 +62,7 @@ class SettingsMenuView(Menu):
                             [('Default', 'default'),
                              ('Rock', 'rock'),
                                 ('Tiago', 'tiago'),],
+                            default=['default', 'rock', 'tiago'].index(self.gui.skin),
                             onchange=self.change_skin
                             )
         

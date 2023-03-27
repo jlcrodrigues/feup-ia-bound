@@ -29,6 +29,7 @@ class GUI:
         
         self.background = pygame.image.load("../assets/images/background.png")
 
+        self.skin = "Default"
         self.set_skin("default")
 
         self.mouse_pos = (-1, -1)
@@ -165,6 +166,7 @@ class GUI:
             print("That skin does not exist: " + skin)
             return
 
+        self.skin = skin
         self.black_img = pygame.image.load("../assets/images/skins/" + skin + "/black.png")
         self.white_img = pygame.image.load("../assets/images/skins/" + skin + "/white.png")
 
