@@ -80,6 +80,8 @@ class BotMenuView(Menu):
         self.menu.add.button('play', self.start_game).translate(0, PADDING)
          
         self.menu.select_widget(self.menu.get_widgets()[2])
+        
+        self.hide_bot_settings()
 
     def load_texts(self):
         """Load bot descriptions from files."""
@@ -95,6 +97,13 @@ class BotMenuView(Menu):
     def change_bot(self, _, new_bot: str):
         self.menu.get_widgets()[3].set_title(self.descriptions[BOTS[new_bot]])
         self.selection = new_bot
+        self.hide_bot_settings()
+        if self.selection=="Martim":
+            self.menu.get_widgets()[4].show()
+            self.menu.get_widgets()[5].show()
+        elif self.selection=="Luís":
+            self.menu.get_widgets()[6].show()
+            self.menu.get_widgets()[7].show()
         self.play_click()
         
     def change_minimax_depth(self,new_depth: int):
@@ -121,3 +130,9 @@ class BotMenuView(Menu):
     def close(self):
         self.menu.disable()
         self.start = False
+        
+    def hide_bot_settings(self):
+        self.menu.get_widgets()[4].hide()
+        self.menu.get_widgets()[5].hide()
+        self.menu.get_widgets()[6].hide()
+        self.menu.get_widgets()[7].hide()
