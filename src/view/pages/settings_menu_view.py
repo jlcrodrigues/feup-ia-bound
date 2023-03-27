@@ -60,6 +60,7 @@ class SettingsMenuView(Menu):
 
         self.menu.add.selector('Skin: ',
                             [('Default', 'default'),
+                             ('Rock', 'rock'),
                                 ('Tiago', 'tiago'),],
                             onchange=self.change_skin
                             )
