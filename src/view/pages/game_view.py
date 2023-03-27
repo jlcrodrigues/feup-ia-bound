@@ -1,3 +1,4 @@
+from model.bot import Bot
 from view.pages.menu import Menu
 from view.gui import GUI
 from view.theme import *
@@ -18,6 +19,8 @@ class GameView(Menu):
         self.playing_color = PLAYER_1_COLOR
         self.player1_name = players[0].name
         self.player2_name = players[1].name
+
+        self.hint = None
 
         if self.gui == None: return
         self.init_menu()
@@ -44,6 +47,15 @@ class GameView(Menu):
             font_size=100,
             selection_color = SELECTED_COLOR
         ).translate(0,-10)
+        self.menu.add.button(
+            '?',
+            lambda : self.show_hint(),
+            align=pygame_menu.locals.ALIGN_RIGHT,
+            float=True,
+            font_color = EMPTY_COLOR,
+            font_size=100,
+            selection_color = SELECTED_COLOR
+        ).translate(-40,0)
 
     def init_modal(self):
         """Creates the pause modal box."""
@@ -72,7 +84,7 @@ class GameView(Menu):
 
         #draw game
         self.gui.draw_background()
-        self.gui.draw_grid(self.game.board, self.selected)
+        self.gui.draw_grid(self.game.board, self.selected, self.hint)
         self.gui.draw_pieces(self.game.board, last_moved)
 
         #draw ui
@@ -123,9 +135,11 @@ class GameView(Menu):
                 if self.dist(edge_pos, mouse_pos) < (PIECE_RADIUS + tolerance) ** 2:
                     move =  (self.selected, edge)
                     self.selected = None
+                    self.hint = None
                     return move
         
         self.selected = None
+        self.hint = None
 
     def update_modal(self):
         title = "Paused"
@@ -173,6 +187,11 @@ class GameView(Menu):
         self.modal.disable()
         #self.menu.enable()
         self.menu.get_widgets()[0].select(update_menu=True)
+    
+    def show_hint(self):
+        bot = Bot(self.last_player, "Martim")
+        self.hint = bot.get_move(self.game)
+        print(f'hint: {self.hint}')
     
     def draw_top_bar(self):
         """Draw the top nav bar."""
