@@ -5,7 +5,7 @@ class Game:
     """
     A Bound Game instance. This model holds the logic to play the game.
     """
-    def __init__(self,board_size):
+    def __init__(self,board_size=1):
         self.board = self.init_board(board_size)
         self.player = BLACK
         self.winner = None
