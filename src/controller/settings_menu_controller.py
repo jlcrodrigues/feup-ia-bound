@@ -1,6 +1,5 @@
 from model.bot import Bot
 from view.pages.settings_menu_view import SettingsMenuView
-from random import randint
 
 class SettingsMenuController:
     def __init__(self, gui):
@@ -12,7 +11,4 @@ class SettingsMenuController:
         if not self.view.step(): return False
 
         return True
-
-
-
 
