@@ -1,6 +1,7 @@
 import pygame
 import pygame_menu
 from view.theme import *
+from pygame_menu.widgets.core.selection import Selection
 
 class Menu:
     """This class defines a generic menu.
@@ -23,7 +24,7 @@ class Menu:
         self.theme.widget_font_color = EMPTY_COLOR
         self.theme.selection_color = SELECTED_COLOR
         self.theme.title = False  # Hide the menu title
-        self.theme.widget_selection_effect = pygame_menu.widgets.SimpleSelection()
+        self.theme.widget_selection_effect = RectangleSelection()
 
         if background:
             self.theme.background_color = pygame_menu.BaseImage(
@@ -46,3 +47,23 @@ class Menu:
         self.sound = pygame.mixer.Sound("../assets/sound/effects/click.mp3")
         self.sound.set_volume(self.gui.settings.sound_effects_volume)
         self.sound.play()
+
+
+
+class RectangleSelection(Selection):
+    """Custom Selection effect. Draw a rectangle behind the widget."""
+    def __init__(self):
+        super(RectangleSelection, self).__init__(0, 0, 0, 0)
+
+    def draw(self, surface, widget):
+        if type(widget) not in [
+            pygame_menu.widgets.Button,
+            pygame_menu.widgets.Selector,
+            ]: return
+
+        pygame.draw.rect(surface, EMPTY_COLOR, [widget.get_rect()[0]-0, widget.get_rect()[1]-0, 
+                                                widget.get_rect()[2], 
+                                                widget.get_rect()[3]],
+                                                border_radius=10)
+
+        widget.draw(surface)
