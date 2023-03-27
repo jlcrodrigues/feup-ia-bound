@@ -1,5 +1,6 @@
 import pygame
 from math import sin, cos
+import os
 
 from model.game import Game
 from model.board import Board
@@ -28,11 +29,8 @@ class GUI:
         
         self.background = pygame.image.load("../assets/images/background.png")
 
-        self.black_img = pygame.image.load("../assets/images/black.png")
-        self.white_img = pygame.image.load("../assets/images/white.png")
-
-        self.black_img = pygame.transform.scale(self.black_img, (36, 36))
-        self.white_img = pygame.transform.scale(self.white_img, (36, 36))
+        self.skin = "Default"
+        self.set_skin("default")
 
         self.mouse_pos = (-1, -1)
         self.mouse_pressed = (False, False, False)
@@ -163,5 +161,15 @@ class GUI:
     def get_height(self):
         return self.win.get_height()
 
+    def set_skin(self, skin):
+        if not os.path.isfile("../assets/images/skins/" + skin + "/black.png"):
+            print("That skin does not exist: " + skin)
+            return
 
+        self.skin = skin
+        self.black_img = pygame.image.load("../assets/images/skins/" + skin + "/black.png")
+        self.white_img = pygame.image.load("../assets/images/skins/" + skin + "/white.png")
 
+        piece_size = 32
+        self.black_img = pygame.transform.scale(self.black_img, (piece_size, piece_size))
+        self.white_img = pygame.transform.scale(self.white_img, (piece_size, piece_size))
