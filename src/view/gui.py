@@ -35,8 +35,8 @@ class GUI:
         self.mouse_pos = (-1, -1)
         self.mouse_pressed = (False, False, False)
 
-        self.font = pygame.font.Font(FONT_PATH, 30)
-        self.font_small = pygame.font.Font(FONT_PATH, 20)
+        self.font = pygame.font.Font(FONT_PATH, FONT_SIZE)
+        self.font_small = pygame.font.Font(FONT_PATH, FONT_SIZE_SMALL)
         self.events = []
 
 
@@ -109,18 +109,17 @@ class GUI:
                         
                 else: pygame.draw.line(self.win, line_color, pos, edge_pos, LINE_WIDTH)
 
-    def draw_pieces(self, board, last_moved: tuple):
+    def draw_pieces(self, pieces: dict, board, last_moved: tuple):
         """Display the board, including nodes, pieces and edges."""
         for node in board.nodes:
             pos = self.get_pos(board, (node.level, node.pos))
 
-            pygame.draw.circle(self.win, EMPTY_COLOR, pos , NODE_RADIUS)
-            if not node.is_empty():
-                if node.piece == 1:
-                #pygame.draw.circle(self.win, self.get_color(node), pos , PIECE_RADIUS)
-                    self.win.blit(self.black_img, (pos[0] - 16, pos[1] - 16))
-                else: 
-                    self.win.blit(self.white_img, (pos[0] - 16, pos[1] - 16))
+            if pieces == board.pieces: #display last moved if history is updated
+                pygame.draw.circle(self.win, EMPTY_COLOR, pos , NODE_RADIUS)
+            if (node.level, node.pos) in pieces[1]:
+                self.win.blit(self.black_img, (pos[0] - 16, pos[1] - 16))
+            elif (node.level, node.pos) in pieces[2]: 
+                self.win.blit(self.white_img, (pos[0] - 16, pos[1] - 16))
 
             elif last_moved == (node.level, node.pos):
                 pygame.draw.circle(self.win, EMPTY_COLOR2, pos , NODE_RADIUS)
