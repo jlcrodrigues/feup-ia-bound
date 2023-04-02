@@ -19,4 +19,6 @@ class MenuState(State):
             if mode > 1: return BotMenuState(self.gui, mode)
             return GameState(self.gui, [Player(1), Player(2)])
         elif self.controller.settings:
+            return SettingsMenuState(self.gui)
+        elif self.controller.rules:
             return RulesState(self.gui)

@@ -7,6 +7,7 @@ class MenuController:
         self.start = False
         self.mode = 1
         self.settings = False
+        self.rules = False
 
     def play(self):
         """Execute the menu until Play button is clicked. Determine game mode."""
@@ -16,6 +17,8 @@ class MenuController:
             self.mode = self.view.mode
         elif self.view.settings:
             self.settings = True
+        elif self.view.rules:
+            self.rules = True
         
 
 

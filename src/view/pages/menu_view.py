@@ -9,6 +9,7 @@ class MenuView(Menu):
         self.mode = 1
         self.start = False
         self.settings = False
+        self.rules = False
 
         self.init_menu()
         self.menu.center_content()
@@ -27,6 +28,8 @@ class MenuView(Menu):
                 onchange = self.change_mode)
         
         self.menu.add.button('play', self.start_game)
+        
+        self.menu.add.button('rules', self.start_rules)
         
         self.menu.add.button('settings', self.start_settings)
         
@@ -50,3 +53,7 @@ class MenuView(Menu):
     def start_settings(self):
         self.menu.disable()
         self.settings = True
+        
+    def start_rules(self):
+        self.menu.disable()
+        self.rules = True

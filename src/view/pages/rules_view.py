@@ -36,7 +36,7 @@ class RulesView(Menu):
             self.descriptions[0],
             wordwrap=True,
             font_name=FONT_PATH,
-            font_size=25).set_alignment(pygame_menu.locals.ALIGN_RIGHT).set_padding([0, 10, 30, 0])
+            font_size=25).set_padding([0, 0, 10, 10])
 
     def step(self) -> bool:
         """Calls the menu main loop."""
