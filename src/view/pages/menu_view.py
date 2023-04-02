@@ -10,12 +10,14 @@ class MenuView(Menu):
         self.start = False
         self.settings = False
         self.rules = False
+        self.about = False
 
         self.init_menu()
         self.menu.center_content()
 
     def init_menu(self):
         """Define all the widgets needed on the menu."""
+                
         self.menu.add.label(
             'bound',
             font_name=FONT_PATH,
@@ -34,6 +36,16 @@ class MenuView(Menu):
         self.menu.add.button('settings', self.start_settings)
         
         self.menu.add.button('quit', pygame_menu.events.EXIT)
+        
+        self.menu.add.button(
+            '@',
+            lambda : self.start_about(),
+            align=pygame_menu.locals.ALIGN_RIGHT,
+            float=True,
+            font_color = EMPTY_COLOR,
+            font_size=100,
+            selection_color = SELECTED_COLOR
+        ).translate(-0,-420)
 
     def step(self) -> bool:
         """Calls the menu main loop."""
@@ -57,3 +69,7 @@ class MenuView(Menu):
     def start_rules(self):
         self.menu.disable()
         self.rules = True
+        
+    def start_about(self):
+        self.menu.disable()
+        self.about = True

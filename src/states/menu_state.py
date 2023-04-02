@@ -1,6 +1,7 @@
 from states.bot_menu_state import BotMenuState
 from states.settings_menu_state import SettingsMenuState
 from states.rules_state import RulesState
+from states.about_state import AboutState
 from states.state import State
 from states.game_state import GameState
 from controller.menu_controller import MenuController
@@ -22,3 +23,5 @@ class MenuState(State):
             return SettingsMenuState(self.gui)
         elif self.controller.rules:
             return RulesState(self.gui)
+        elif self.controller.about:
+            return AboutState(self.gui)
