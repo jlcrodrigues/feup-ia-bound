@@ -52,8 +52,9 @@ class GameController:
             return
 
         if (self.game.over): return
-        if self.step_move():
-            self.rounds += 1
+        if self.view.can_move():
+            if self.step_move():
+                self.rounds += 1
 
     def step_move(self):
         """Execute a move given by the current player."""

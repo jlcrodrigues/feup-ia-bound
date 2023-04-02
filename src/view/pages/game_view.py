@@ -19,6 +19,8 @@ class GameView(Menu):
         self.player1_name = players[0].name
         self.player2_name = players[1].name
 
+        self.pieces_index = 0 # used to cycle through the pieces history
+
         if self.gui == None: return
         self.init_menu()
         self.init_modal()
@@ -44,6 +46,11 @@ class GameView(Menu):
             font_size=100,
             selection_color = SELECTED_COLOR
         ).translate(0,-10)
+        history_y = self.gui.get_height() - FONT_SIZE - 20
+        self.menu.add.button('<<', lambda : self.history_start(), float=True).translate(-FONT_SIZE*2, history_y)
+        self.menu.add.button('<', lambda : self.history_backward(), float=True).translate(-FONT_SIZE/2, history_y)
+        self.menu.add.button('>', lambda : self.history_forward(), float=True).translate(FONT_SIZE/2, history_y)
+        self.menu.add.button('>>', lambda : self.history_current(), float=True).translate(FONT_SIZE*2, history_y)
 
     def init_modal(self):
         """Creates the pause modal box."""
@@ -66,6 +73,10 @@ class GameView(Menu):
         if self.gui == None:
             return self.game.over
 
+        if (self.game.player != self.last_player):
+            if self.pieces_index == len(self.game.history) - 2: # update history
+                self.pieces_index += 1
+
         self.update_modal()
 
         self.step_sound()
@@ -73,7 +84,10 @@ class GameView(Menu):
         #draw game
         self.gui.draw_background()
         self.gui.draw_grid(self.game.board, self.selected)
-        self.gui.draw_pieces(self.game.board, last_moved)
+
+        pieces = list(self.game.history.keys())[self.pieces_index]
+        if (pieces[0] == '-'): pieces = pieces[1:]
+        self.gui.draw_pieces(eval(pieces), self.game.board, last_moved)
 
         #draw ui
         self.draw_top_bar()
@@ -201,4 +215,26 @@ class GameView(Menu):
         self.gui.win.blit(text1, (px, py))
         self.gui.win.blit(text2, (-px + self.gui.get_width() - text2.get_width(),
                                          py))
+
+    def history_start(self):
+        """Start the history."""
+        self.pieces_index = 0
+    
+    def history_forward(self):
+        """Move the history forward."""
+        if self.pieces_index < len(self.game.history) - 1:
+            self.pieces_index += 1
+    
+    def history_backward(self):
+        """Move the history backward."""
+        if self.pieces_index > 0:
+            self.pieces_index -= 1
+    
+    def history_current(self):
+        """Move the history to the current state."""
+        self.pieces_index = len(self.game.history) - 1
+
+    def can_move(self):
+        """Check if the player can move."""
+        return self.pieces_index == len(self.game.history) - 1
         
