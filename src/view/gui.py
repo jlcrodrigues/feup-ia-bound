@@ -42,9 +42,8 @@ class GUI:
         self.sound = GUISound(self.settings)
         
         self.background = pygame.image.load("../assets/images/background.png")
-
-        self.skin = "Default"
-        self.set_skin("default")
+        
+        self.set_skin(self.settings.skin)
 
         self.mouse_pos = (-1, -1)
         self.mouse_pressed = (False, False, False)
