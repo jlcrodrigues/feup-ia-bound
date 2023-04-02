@@ -1,4 +1,5 @@
 import pygame
+import pickle
 from math import sin, cos
 import os
 
@@ -7,6 +8,9 @@ from model.board import Board
 from model.settings import Settings
 from view.theme import *
 from view.gui_sound import GUISound
+
+# define a filename to save the settings
+FILENAME = '../assets/settings.pkl'
 
 class GUI:
     """
@@ -25,6 +29,16 @@ class GUI:
         self.closed = False
 
         self.settings = Settings()
+
+        # try to load the settings from the file
+        try:
+            with open(FILENAME, 'rb') as f:
+                self.settings = pickle.load(f)
+        except FileNotFoundError:
+            # if the file doesn't exist, create it with default settings
+            with open(FILENAME, 'wb') as f:
+                pickle.dump(self.settings, f)
+        
         self.sound = GUISound(self.settings)
         
         self.background = pygame.image.load("../assets/images/background.png")
@@ -172,3 +186,8 @@ class GUI:
         piece_size = 32
         self.black_img = pygame.transform.scale(self.black_img, (piece_size, piece_size))
         self.white_img = pygame.transform.scale(self.white_img, (piece_size, piece_size))
+        
+    def save_settings(self):
+        with open(FILENAME, 'wb') as f:
+            pickle.dump(self.settings, f)
+
