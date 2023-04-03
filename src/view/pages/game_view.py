@@ -96,7 +96,7 @@ class GameView(Menu):
 
         #draw game
         self.gui.draw_background()
-        self.gui.draw_grid(self.game.board, self.selected)
+        self.gui.draw_grid(self.game.board, self.selected, self.hint)
 
         pieces = list(self.game.history.keys())[self.pieces_index]
         if (pieces[0] == '-'): pieces = pieces[1:]
