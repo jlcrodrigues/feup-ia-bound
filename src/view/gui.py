@@ -9,8 +9,7 @@ from model.settings import Settings
 from view.theme import *
 from view.gui_sound import GUISound
 
-# define a filename to save the settings
-FILENAME = '../assets/settings.pkl'
+SETTINGS_FILE = '../assets/settings.pkl'
 
 class GUI:
     """
@@ -29,15 +28,7 @@ class GUI:
         self.closed = False
 
         self.settings = Settings()
-
-        # try to load the settings from the file
-        try:
-            with open(FILENAME, 'rb') as f:
-                self.settings = pickle.load(f)
-        except FileNotFoundError:
-            # if the file doesn't exist, create it with default settings
-            with open(FILENAME, 'wb') as f:
-                pickle.dump(self.settings, f)
+        self.load_settings()
         
         self.sound = GUISound(self.settings)
         
@@ -187,6 +178,16 @@ class GUI:
         self.white_img = pygame.transform.scale(self.white_img, (piece_size, piece_size))
         
     def save_settings(self):
-        with open(FILENAME, 'wb') as f:
+        """Save the settings to a file."""
+        with open(SETTINGS_FILE, 'wb') as f:
             pickle.dump(self.settings, f)
 
+    def load_settings(self):
+        """Try to load settigns from a file."""
+        try:
+            with open(SETTINGS_FILE, 'rb') as f:
+                self.settings = pickle.load(f)
+        except FileNotFoundError:
+            # if the file doesn't exist, create it with default settings
+            with open(SETTINGS_FILE, 'wb') as f:
+                pickle.dump(self.settings, f)
