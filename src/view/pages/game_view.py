@@ -162,6 +162,7 @@ class GameView(Menu):
         self.last_player = 1
         self.is_restart = False 
         self.played_over_sound = False
+        self.pieces_index = 0 
     
     def dist(self, coord1: tuple, coord2: tuple):
         """Get the square distance between two points."""
