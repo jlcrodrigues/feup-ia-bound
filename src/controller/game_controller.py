@@ -56,14 +56,14 @@ class GameController:
             return
 
         if (self.game.over): return
-        if self.view.can_move():
+        if (self.view.can_move() or self.gui == None):
             if self.step_move():
                 self.rounds += 1
 
     def step_move(self):
         """Execute a move given by the current player."""
         if self.t.is_alive():
-            print("alive")
+            #print("alive")
             return
         if self.player.is_bot: 
             delay = 0 if self.gui == None else self.gui.settings.bot_delay_in_sec()
