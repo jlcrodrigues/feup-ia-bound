@@ -76,22 +76,29 @@ class SettingsMenuView(Menu):
     def change_board_size(self, _, new_size: int):
         self.play_click()
         self.gui.settings.board_size = new_size
+        self.gui.save_settings()
 
     def change_music_volume(self,new_volume: int):
         self.play_click()
         self.gui.settings.music_volume = new_volume/100
+        self.gui.save_settings()
         self.gui.sound.music.set_volume(new_volume/100)
         
     def change_effects_volume(self,new_volume: int):
-        self.play_click()
         self.gui.settings.sound_effects_volume = new_volume/100
+        self.gui.save_settings()
         self.init_sounds()
+        self.play_click()
         
     def change_bot_delay(self, _, new_delay: int):
         self.play_click()
         self.gui.settings.bot_delay = new_delay
+        self.gui.save_settings()
 
     def change_skin(self, _, new_skin: str):
+        self.play_click()
+        self.gui.settings.skin = new_skin
+        self.gui.save_settings()
         self.gui.set_skin(new_skin)
 
     def close(self):
