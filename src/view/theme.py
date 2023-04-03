@@ -21,7 +21,8 @@ PLAYER_2_COLOR = WHITE
 
 #SELECTED_COLOR = (164, 39, 4)
 SELECTED_COLOR = (37, 88, 90)
-
-HINT_COLOR = (207,181,59)
+MOVES_COLOR = (250, 181, 72)
+HINT_COLOR = (37, 88, 90)
+BOTH_COLOR = (27, 66, 67)
 
 FONT_PATH = '../assets/fonts/grange/Grange.ttf'

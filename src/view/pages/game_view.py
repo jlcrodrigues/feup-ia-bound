@@ -21,6 +21,7 @@ class GameView(Menu):
         self.player2_name = players[1].name
 
         self.hint = None
+        self.num_hints = 5
 
         if self.gui == None: return
         self.init_menu()
@@ -39,6 +40,15 @@ class GameView(Menu):
         ).translate(0,-3)
         self.menu.add.label('bound', align=pygame_menu.locals.ALIGN_CENTER, float=True).translate(0,-3)
         self.menu.add.button(
+            str(self.num_hints) + '?',
+            lambda : self.show_hint() ,
+            align=pygame_menu.locals.ALIGN_RIGHT,
+            float=True,
+            font_color = EMPTY_COLOR,
+            font_size=100,
+            selection_color = SELECTED_COLOR
+        ).translate(-40,0)
+        self.menu.add.button(
             '...',
             lambda : self.enable_modal(),
             align=pygame_menu.locals.ALIGN_RIGHT,
@@ -47,15 +57,7 @@ class GameView(Menu):
             font_size=100,
             selection_color = SELECTED_COLOR
         ).translate(0,-10)
-        self.menu.add.button(
-            '?',
-            lambda : self.show_hint(),
-            align=pygame_menu.locals.ALIGN_RIGHT,
-            float=True,
-            font_color = EMPTY_COLOR,
-            font_size=100,
-            selection_color = SELECTED_COLOR
-        ).translate(-40,0)
+        
 
     def init_modal(self):
         """Creates the pause modal box."""
@@ -139,7 +141,6 @@ class GameView(Menu):
                     return move
         
         self.selected = None
-        self.hint = None
 
     def update_modal(self):
         title = "Paused"
@@ -162,6 +163,8 @@ class GameView(Menu):
         self.last_player = 1
         self.is_restart = False 
         self.played_over_sound = False
+        self.num_hints = 5
+        self.menu.get_widgets()[3].set_title(str(self.num_hints) + '?')
     
     def dist(self, coord1: tuple, coord2: tuple):
         """Get the square distance between two points."""
@@ -189,10 +192,12 @@ class GameView(Menu):
         self.menu.get_widgets()[0].select(update_menu=True)
     
     def show_hint(self):
-        bot = Bot(self.last_player, "Martim")
-        self.hint = bot.get_move(self.game)
-        print(f'hint: {self.hint}')
-    
+        if self.num_hints > 0:
+            bot = Bot(self.last_player, "Martim")
+            self.hint = bot.get_move(self.game)
+            self.num_hints -= 1
+            self.menu.get_widgets()[3].set_title(str(self.num_hints) + '?')
+
     def draw_top_bar(self):
         """Draw the top nav bar."""
         height = 0.3 * PADDING
@@ -218,6 +223,5 @@ class GameView(Menu):
         text2 = self.gui.font_small.render(self.player2_name, True, PLAYER_2_COLOR)
 
         self.gui.win.blit(text1, (px, py))
-        self.gui.win.blit(text2, (-px + self.gui.get_width() - text2.get_width(),
-                                         py))
+        self.gui.win.blit(text2, (-px + self.gui.get_width() - text2.get_width(),py))
         
