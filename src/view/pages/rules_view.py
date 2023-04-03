@@ -36,7 +36,7 @@ class RulesView(Menu):
             self.descriptions[0],
             wordwrap=True,
             font_name=FONT_PATH,
-            font_size=25).set_padding([0, 0, 10, 10])
+            font_size=25).set_padding([0, 20, 10, 20])
 
     def step(self) -> bool:
         """Calls the menu main loop."""
