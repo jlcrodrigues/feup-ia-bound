@@ -14,30 +14,33 @@ def main_dev():
     average_time_player_1 = 0
     average_time_player_2 = 0
     count = 0
-    games = 30
+    games = 4
+    average_rounds = 0
     
     for i in range(games):
         print("Game: ", i)
         # create a game controller with two bots
         player1 = Bot(1,"Tiago")
-        player1.bot_settings.minimax_depth = 3
+        player1.bot_settings.minimax_depth = 5
         player1.bot_settings.minimax_evaluate = 3
-        player1.bot_settings.montecarlo_exploration = 2
-        player1.bot_settings.montecarlo_simulations = 2000
+        player1.bot_settings.montecarlo_exploration = 1.4
+        player1.bot_settings.montecarlo_simulations = 500
         player2 = Bot(2,"Tiago")
-        player2.bot_settings.minimax_depth = 3
+        player2.bot_settings.minimax_depth = 5
         player2.bot_settings.minimax_evaluate = 3
-        player2.bot_settings.montecarlo_exploration = 2
-        player2.bot_settings.montecarlo_simulations = 2000
+        player2.bot_settings.montecarlo_exploration = 1.4
+        player2.bot_settings.montecarlo_simulations = 500
         #board = 1 -> 4x5 board | board = 2 -> 6x5 board | board = 3 -> 8x5 board
         game_controller = GameController(player1, player2,None,1) 
         # play the game
         winner = game_controller.play()
         time_player_1 = game_controller.average_time_player_1
         time_player_2 = game_controller.average_time_player_2
+        rounds = game_controller.rounds
         count += 1
         average_time_player_1 = ((count - 1) * average_time_player_1 + time_player_1) / count  # calculate running average
         average_time_player_2 = ((count - 1) * average_time_player_2 + time_player_2) / count  # calculate running average
+        average_rounds = ((count - 1) * average_rounds + rounds) / count
 
         #keep track of the results
         if winner == 1:
@@ -48,6 +51,7 @@ def main_dev():
     #print the results
     print("\n\n\nFINAL RESULTS")
     print("Number of games: ", games)
+    print("Average rounds: ", average_rounds)
     print("Player 1 BLACK wins: ", player1_wins)
     print("Player 2 WHITE wins: ", player2_wins)
     print("Average time player 1 BLACK: ", average_time_player_1)
