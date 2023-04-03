@@ -98,14 +98,18 @@ class GUI:
 
                 #draw the arches
                 if edge_coords[0] == board.ring_number - 1 and node.level == board.ring_number - 1:
+                    #from last node to first
+                    if node.pos == board.nodes_per_ring - 1 and edge_coords[1] == 0: 
+                        start_pos = -1
+
                     #only draw clockwise
-                    if node.pos == board.nodes_per_ring - 1 and edge_coords[1] == 0: start_pos = -1
                     elif node.pos == 0 and edge_coords[1] == board.nodes_per_ring - 1: continue
                     elif node.pos > edge_coords[1]: continue 
 
                     #get the start angle
                     else: start_pos = node.pos if node.pos < edge_coords[1] else edge_coords[1]
-                    start_angle = angle * (-start_pos - 1) + (angle / 2) * (node.level // 2)
+                    offset = round(angle / 2 * (board.ring_number // 2))
+                    start_angle = angle * (-start_pos - offset) + (angle / 2) * (node.level // 2)
 
                     rectangle = (center[0] - gap * board.ring_number - 4, center[1] - gap * board.ring_number - 4,
                                   gap * board.ring_number * 2 + 4, gap * board.ring_number * 2 + 4)
@@ -127,7 +131,6 @@ class GUI:
 
             elif last_moved == (node.level, node.pos):
                 pygame.draw.circle(self.win, EMPTY_COLOR2, pos , NODE_RADIUS)
-
 
     def get_pos(self, board: Board, coords: tuple):
         """
@@ -166,8 +169,7 @@ class GUI:
 
     def set_skin(self, skin):
         if not os.path.isfile("../assets/images/skins/" + skin + "/black.png"):
-            print("That skin does not exist: " + skin)
-            return
+            raise ValueError("That skin does not exist: " + skin)
 
         self.skin = skin
         self.black_img = pygame.image.load("../assets/images/skins/" + skin + "/black.png")
