@@ -1,6 +1,8 @@
+import threading
 from model.game import Game
 from model.bot import Bot
 from model.player import Player
+from utils.threading import count_time
 from view.pages.game_view import GameView
 from time import sleep,time
 
@@ -32,6 +34,8 @@ class GameController:
         self.average_time_player_2 = 0
         self.player_2_count = 0
 
+        self.t = threading.Thread()
+
     def play(self):
         """Play out a full game."""
         while (not self.close):
@@ -52,13 +56,20 @@ class GameController:
             return
 
         if (self.game.over): return
-        if self.step_move():
-            self.rounds += 1
+        if (self.view.can_move() or self.gui == None):
+            if self.step_move():
+                self.rounds += 1
 
     def step_move(self):
         """Execute a move given by the current player."""
+        if self.t.is_alive():
+            #print("alive")
+            return
         if self.player.is_bot: 
             delay = 0 if self.gui == None else self.gui.settings.bot_delay_in_sec()
+            self.t = threading.Thread(target=count_time, args=(delay,))
+            self.t.start()
+
             start_time = time()
             next_move = self.player.get_move(self.game)
             end_time = time()  # get time after function completes
@@ -71,8 +82,6 @@ class GameController:
                 self.player_2_count += 1  # increment count
                 self.average_time_player_2 = ((self.player_2_count - 1) * self.average_time_player_2 + elapsed_time) / self.player_2_count  # calculate running average
 
-            if elapsed_time < delay:
-                sleep(delay - elapsed_time)  # wait for remaining time
         else:
             next_move = self.get_user_input()
 

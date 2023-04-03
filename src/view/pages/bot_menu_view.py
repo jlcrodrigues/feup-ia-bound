@@ -46,8 +46,9 @@ class BotMenuView(Menu):
     
         self.menu.add.label(
             self.descriptions[0],
+            wordwrap=True,
             font_name=FONT_PATH,
-            font_size=25)
+            font_size=25).set_alignment(pygame_menu.locals.ALIGN_RIGHT).set_padding([0, 10, 30, 0])
         
         self.menu.add.range_slider('Minimax Depth:',
                                       range_values=[1,2,3,4,5],

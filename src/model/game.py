@@ -50,17 +50,15 @@ class Game:
 
     def stalemate(self):
         """Check if the game is in a stalemate."""
-        
-        #sort pieces
         sorted_pieces = {BLACK: sorted(self.board.pieces[BLACK]), WHITE: sorted(self.board.pieces[WHITE])}
         
         # Update the count for the current board
         if str(sorted_pieces) in self.history:
             self.history[str(sorted_pieces)] += 1
+            if self.history[str(sorted_pieces)] == 3:
+                return True
+            self.history['-' + str(sorted_pieces)] = 0
         else:
             self.history[str(sorted_pieces)] = 1
 
-        if self.history[str(sorted_pieces)] == 3:
-            return True
-        
         return False

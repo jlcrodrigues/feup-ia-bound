@@ -1,11 +1,15 @@
 import pygame
+import pickle
 from math import sin, cos
+import os
 
 from model.game import Game
 from model.board import Board
 from model.settings import Settings
 from view.theme import *
 from view.gui_sound import GUISound
+
+SETTINGS_FILE = '../assets/settings.pkl'
 
 class GUI:
     """
@@ -15,7 +19,7 @@ class GUI:
     def __init__(self):
         pygame.init()
 
-        self.win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
+        self.win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Bound")
         icon = pygame.image.load("../assets/images/icon.png")
         pygame.display.set_icon(icon)
@@ -24,21 +28,19 @@ class GUI:
         self.closed = False
 
         self.settings = Settings()
+        self.load_settings()
+        
         self.sound = GUISound(self.settings)
         
         self.background = pygame.image.load("../assets/images/background.png")
-
-        self.black_img = pygame.image.load("../assets/images/black.png")
-        self.white_img = pygame.image.load("../assets/images/white.png")
-
-        self.black_img = pygame.transform.scale(self.black_img, (36, 36))
-        self.white_img = pygame.transform.scale(self.white_img, (36, 36))
+        
+        self.set_skin(self.settings.skin)
 
         self.mouse_pos = (-1, -1)
         self.mouse_pressed = (False, False, False)
 
-        self.font = pygame.font.Font(FONT_PATH, 30)
-        self.font_small = pygame.font.Font(FONT_PATH, 20)
+        self.font = pygame.font.Font(FONT_PATH, FONT_SIZE)
+        self.font_small = pygame.font.Font(FONT_PATH, FONT_SIZE_SMALL)
         self.events = []
 
 
@@ -100,14 +102,18 @@ class GUI:
 
                 #draw the arches
                 if edge_coords[0] == board.ring_number - 1 and node.level == board.ring_number - 1:
+                    #from last node to first
+                    if node.pos == board.nodes_per_ring - 1 and edge_coords[1] == 0: 
+                        start_pos = -1
+
                     #only draw clockwise
-                    if node.pos == board.nodes_per_ring - 1 and edge_coords[1] == 0: start_pos = -1
                     elif node.pos == 0 and edge_coords[1] == board.nodes_per_ring - 1: continue
                     elif node.pos > edge_coords[1]: continue 
 
                     #get the start angle
                     else: start_pos = node.pos if node.pos < edge_coords[1] else edge_coords[1]
-                    start_angle = angle * (-start_pos - 1) + (angle / 2) * (node.level // 2)
+                    offset = round(angle / 2 * (board.ring_number // 2))
+                    start_angle = angle * (-start_pos - offset) + (angle / 2) * (node.level // 2)
 
                     rectangle = (center[0] - gap * board.ring_number - 4, center[1] - gap * board.ring_number - 4,
                                   gap * board.ring_number * 2 + 4, gap * board.ring_number * 2 + 4)
@@ -115,22 +121,20 @@ class GUI:
                         
                 else: pygame.draw.line(self.win, line_color, pos, edge_pos, LINE_WIDTH)
 
-    def draw_pieces(self, board, last_moved: tuple):
+    def draw_pieces(self, pieces: dict, board, last_moved: tuple):
         """Display the board, including nodes, pieces and edges."""
         for node in board.nodes:
             pos = self.get_pos(board, (node.level, node.pos))
 
-            pygame.draw.circle(self.win, EMPTY_COLOR, pos , NODE_RADIUS)
-            if not node.is_empty():
-                if node.piece == 1:
-                #pygame.draw.circle(self.win, self.get_color(node), pos , PIECE_RADIUS)
-                    self.win.blit(self.black_img, (pos[0] - 16, pos[1] - 16))
-                else: 
-                    self.win.blit(self.white_img, (pos[0] - 16, pos[1] - 16))
+            if pieces == board.pieces: #display last moved if history is updated
+                pygame.draw.circle(self.win, EMPTY_COLOR, pos , NODE_RADIUS)
+            if (node.level, node.pos) in pieces[1]:
+                self.win.blit(self.black_img, (pos[0] - 16, pos[1] - 16))
+            elif (node.level, node.pos) in pieces[2]: 
+                self.win.blit(self.white_img, (pos[0] - 16, pos[1] - 16))
 
             elif last_moved == (node.level, node.pos):
                 pygame.draw.circle(self.win, EMPTY_COLOR2, pos , NODE_RADIUS)
-
 
     def get_pos(self, board: Board, coords: tuple):
         """
@@ -167,5 +171,29 @@ class GUI:
     def get_height(self):
         return self.win.get_height()
 
+    def set_skin(self, skin):
+        if not os.path.isfile("../assets/images/skins/" + skin + "/black.png"):
+            raise ValueError("That skin does not exist: " + skin)
 
+        self.skin = skin
+        self.black_img = pygame.image.load("../assets/images/skins/" + skin + "/black.png")
+        self.white_img = pygame.image.load("../assets/images/skins/" + skin + "/white.png")
 
+        piece_size = 32
+        self.black_img = pygame.transform.scale(self.black_img, (piece_size, piece_size))
+        self.white_img = pygame.transform.scale(self.white_img, (piece_size, piece_size))
+        
+    def save_settings(self):
+        """Save the settings to a file."""
+        with open(SETTINGS_FILE, 'wb') as f:
+            pickle.dump(self.settings, f)
+
+    def load_settings(self):
+        """Try to load settigns from a file."""
+        try:
+            with open(SETTINGS_FILE, 'rb') as f:
+                self.settings = pickle.load(f)
+        except FileNotFoundError:
+            # if the file doesn't exist, create it with default settings
+            with open(SETTINGS_FILE, 'wb') as f:
+                pickle.dump(self.settings, f)

@@ -22,6 +22,7 @@ class GameView(Menu):
 
         self.hint = None
         self.num_hints = 5
+        self.pieces_index = 0 # used to cycle through the pieces history
 
         if self.gui == None: return
         self.init_menu()
@@ -58,6 +59,11 @@ class GameView(Menu):
             selection_color = SELECTED_COLOR
         ).translate(0,-10)
         
+        history_y = self.gui.get_height() - FONT_SIZE - 20
+        self.menu.add.button('<<', lambda : self.history_start(), float=True).translate(-FONT_SIZE*2, history_y)
+        self.menu.add.button('<', lambda : self.history_backward(), float=True).translate(-FONT_SIZE/2, history_y)
+        self.menu.add.button('>', lambda : self.history_forward(), float=True).translate(FONT_SIZE/2, history_y)
+        self.menu.add.button('>>', lambda : self.history_current(), float=True).translate(FONT_SIZE*2, history_y)
 
     def init_modal(self):
         """Creates the pause modal box."""
@@ -80,14 +86,21 @@ class GameView(Menu):
         if self.gui == None:
             return self.game.over
 
+        if (self.game.player != self.last_player):
+            if self.pieces_index == len(self.game.history) - 2: # update history
+                self.pieces_index += 1
+
         self.update_modal()
 
         self.step_sound()
 
         #draw game
         self.gui.draw_background()
-        self.gui.draw_grid(self.game.board, self.selected, self.hint)
-        self.gui.draw_pieces(self.game.board, last_moved)
+        self.gui.draw_grid(self.game.board, self.selected)
+
+        pieces = list(self.game.history.keys())[self.pieces_index]
+        if (pieces[0] == '-'): pieces = pieces[1:]
+        self.gui.draw_pieces(eval(pieces), self.game.board, last_moved)
 
         #draw ui
         self.draw_top_bar()
@@ -165,6 +178,7 @@ class GameView(Menu):
         self.played_over_sound = False
         self.num_hints = 5
         self.menu.get_widgets()[3].set_title(str(self.num_hints) + '?')
+        self.pieces_index = 0 
     
     def dist(self, coord1: tuple, coord2: tuple):
         """Get the square distance between two points."""
@@ -224,4 +238,26 @@ class GameView(Menu):
 
         self.gui.win.blit(text1, (px, py))
         self.gui.win.blit(text2, (-px + self.gui.get_width() - text2.get_width(),py))
+
+    def history_start(self):
+        """Start the history."""
+        self.pieces_index = 0
+    
+    def history_forward(self):
+        """Move the history forward."""
+        if self.pieces_index < len(self.game.history) - 1:
+            self.pieces_index += 1
+    
+    def history_backward(self):
+        """Move the history backward."""
+        if self.pieces_index > 0:
+            self.pieces_index -= 1
+    
+    def history_current(self):
+        """Move the history to the current state."""
+        self.pieces_index = len(self.game.history) - 1
+
+    def can_move(self):
+        """Check if the player can move."""
+        return self.pieces_index == len(self.game.history) - 1
         
