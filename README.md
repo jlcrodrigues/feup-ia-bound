@@ -9,7 +9,7 @@ Assuming python is installed, run the main file:
 ```bash
 pip install -r requirements.txt
 cd src
-python src/main.py
+python main.py
 ```
 
 ## Test
@@ -18,7 +18,7 @@ There is also a script included to run the game without the display, in order to
 
 ```bash
 cd src
-python src/main_dev.py
+python main_dev.py
 ```
 
 To run the tests, do:
