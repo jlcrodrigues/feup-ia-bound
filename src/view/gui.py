@@ -79,7 +79,7 @@ class GUI:
             menu.draw(self.win)
             menu.update(self.events)
 
-    def draw_grid(self, board, selected: tuple):
+    def draw_grid(self, board, selected: tuple, hint_move: tuple):
         """Display the board, including nodes, pieces and edges."""
         gap = (self.win.get_width() - PADDING) / (board.ring_number * 2)
         center = self.get_board_center()
@@ -90,11 +90,15 @@ class GUI:
                 edge_coords = board.to_coords(edge)
                 edge_pos = self.get_pos(board, edge_coords)
                 
-                line_color = EMPTY_COLOR
-                if board.nodes[edge].is_empty() and (node.level, node.pos) == selected:
-                    line_color = SELECTED_COLOR 
-                if board.to_coords(edge) == selected and node.is_empty():
-                    line_color = SELECTED_COLOR 
+                condition_1 = (board.nodes[edge].is_empty() and (node.level, node.pos) == selected) or (board.to_coords(edge) == selected and node.is_empty())
+                if hint_move != None:
+                    color_dict = {(False,False): EMPTY_COLOR, (True,False): MOVES_COLOR, (False,True): HINT_COLOR, (True,True): BOTH_COLOR}
+                    condition_2 = ((node.level, node.pos) == hint_move[0] and board.to_coords(edge) == hint_move[1]) or ((node.level, node.pos) == hint_move[1] and board.to_coords(edge) == hint_move[0])
+                    line_color = color_dict[(condition_1, condition_2)]
+                elif condition_1:
+                    line_color = MOVES_COLOR
+                else:
+                    line_color = EMPTY_COLOR 
 
                 #draw the arches
                 if edge_coords[0] == board.ring_number - 1 and node.level == board.ring_number - 1:

@@ -1,3 +1,4 @@
+from model.bot import Bot
 from view.pages.menu import Menu
 from view.gui import GUI
 from view.theme import *
@@ -19,6 +20,8 @@ class GameView(Menu):
         self.player1_name = players[0].name
         self.player2_name = players[1].name
 
+        self.hint = None
+        self.num_hints = 5
         self.pieces_index = 0 # used to cycle through the pieces history
 
         if self.gui == None: return
@@ -38,6 +41,15 @@ class GameView(Menu):
         ).translate(0,-3)
         self.menu.add.label('bound', align=pygame_menu.locals.ALIGN_CENTER, float=True).translate(0,-3)
         self.menu.add.button(
+            str(self.num_hints) + '?',
+            lambda : self.show_hint() ,
+            align=pygame_menu.locals.ALIGN_RIGHT,
+            float=True,
+            font_color = EMPTY_COLOR,
+            font_size=100,
+            selection_color = SELECTED_COLOR
+        ).translate(-40,0)
+        self.menu.add.button(
             '...',
             lambda : self.enable_modal(),
             align=pygame_menu.locals.ALIGN_RIGHT,
@@ -46,6 +58,7 @@ class GameView(Menu):
             font_size=100,
             selection_color = SELECTED_COLOR
         ).translate(0,-10)
+        
         history_y = self.gui.get_height() - FONT_SIZE - 20
         self.menu.add.button('<<', lambda : self.history_start(), float=True).translate(-FONT_SIZE*2, history_y)
         self.menu.add.button('<', lambda : self.history_backward(), float=True).translate(-FONT_SIZE/2, history_y)
@@ -83,7 +96,7 @@ class GameView(Menu):
 
         #draw game
         self.gui.draw_background()
-        self.gui.draw_grid(self.game.board, self.selected)
+        self.gui.draw_grid(self.game.board, self.selected, self.hint)
 
         pieces = list(self.game.history.keys())[self.pieces_index]
         if (pieces[0] == '-'): pieces = pieces[1:]
@@ -137,6 +150,7 @@ class GameView(Menu):
                 if self.dist(edge_pos, mouse_pos) < (PIECE_RADIUS + tolerance) ** 2:
                     move =  (self.selected, edge)
                     self.selected = None
+                    self.hint = None
                     return move
         
         self.selected = None
@@ -162,6 +176,8 @@ class GameView(Menu):
         self.last_player = 1
         self.is_restart = False 
         self.played_over_sound = False
+        self.num_hints = 5
+        self.menu.get_widgets()[3].set_title(str(self.num_hints) + '?')
         self.pieces_index = 0 
     
     def dist(self, coord1: tuple, coord2: tuple):
@@ -189,6 +205,13 @@ class GameView(Menu):
         #self.menu.enable()
         self.menu.get_widgets()[0].select(update_menu=True)
     
+    def show_hint(self):
+        if self.num_hints > 0:
+            bot = Bot(self.last_player, "Martim")
+            self.hint = bot.get_move(self.game)
+            self.num_hints -= 1
+            self.menu.get_widgets()[3].set_title(str(self.num_hints) + '?')
+
     def draw_top_bar(self):
         """Draw the top nav bar."""
         height = 0.3 * PADDING
@@ -214,8 +237,7 @@ class GameView(Menu):
         text2 = self.gui.font_small.render(self.player2_name, True, PLAYER_2_COLOR)
 
         self.gui.win.blit(text1, (px, py))
-        self.gui.win.blit(text2, (-px + self.gui.get_width() - text2.get_width(),
-                                         py))
+        self.gui.win.blit(text2, (-px + self.gui.get_width() - text2.get_width(),py))
 
     def history_start(self):
         """Start the history."""
